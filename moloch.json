@@ -254,32 +254,98 @@
       "action": "list files",
       "identifier": "list_files",
       "description": "List all files",
-      "verbose": "",
       "type": "investigate",
       "read_only": true,
       "parameters": {},
       "output": [
         {
+          "data_path": "action_result.data.*.node",
+          "data_type": "string",
+          "example_values": [
+            "test"
+          ]
+        },
+        {
+          "data_path": "action_result.data.*.num",
+          "data_type": "numeric",
+          "example_values": [
+            1
+          ]
+        },
+        {
+          "data_path": "action_result.data.*.name",
+          "data_type": "string",
+          "example_values": [
+            "/data/moloch/raw/crest-180208-00000001.pcap"
+          ],
+          "contains": [
+            "file path"
+          ]
+        },
+        {
+          "data_path": "action_result.data.*.locked",
+          "data_type": "numeric",
+          "example_values": [
+            0
+          ]
+        },
+        {
+          "data_path": "action_result.data.*.first",
+          "data_type": "numeric",
+          "example_values": [
+            1518098524
+          ]
+        },
+        {
+          "data_path": "action_result.data.*.id",
+          "data_type": "string",
+          "example_values": [
+            "test-1"
+          ]
+        },
+        {
           "data_path": "action_result.status",
           "data_type": "string",
-          "column_name": "status",
-          "column_order": 0
+          "example_values": [
+            "success",
+            "failed"
+          ]
         },
         {
           "data_path": "action_result.message",
-          "data_type": "string"
+          "data_type": "string",
+          "example_values": [
+            "Total files: 2"
+          ]
+        },
+        {
+          "data_path": "action_result.summary.total_files",
+          "data_type": "numeric",
+          "example_values": [
+            2
+         ]
         },
         {
           "data_path": "summary.total_objects",
-          "data_type": "numeric"
+          "data_type": "numeric",
+          "example_values": [
+            1
+          ]
         },
         {
           "data_path": "summary.total_objects_successful",
-          "data_type": "numeric"
+          "data_type": "numeric",
+          "example_values": [
+            1
+          ]
         }
       ],
       "render": {
-        "type": "table"
+        "type": "custom",
+        "width": 4,
+        "height": 5,
+        "view": "moloch_view.display_view",
+        "title": "FILE LIST"
       },
       "versions": "EQ(*)"
     }

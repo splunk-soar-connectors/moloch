@@ -325,51 +325,31 @@ class MolochConnector(BaseConnector):
         return action_result.set_status(phantom.APP_ERROR, "Action not yet implemented")
 
     def _handle_list_files(self, param):
+        """ This function is used to list all files
 
-        # Implement the handler here
-        # use self.save_progress(...) to send progress messages back to the platform
-        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+        :param param: (not used in this method)
+        :return: status success/failure
+        """
 
-        # Add an action result object to self (BaseConnector) to represent the action for this param
         action_result = self.add_action_result(ActionResult(dict(param)))
 
-        """
-        # Access action parameters passed in the 'param' dictionary
+        endpoint = ':{port}{endpoint}'.format(port=self._port, endpoint=MOLOCH_LIST_FILES_ENDPOINT)
 
-        # Required values can be accessed directly
-        required_parameter = param['required_parameter']
+        # make REST call
+        ret_val, response = self._make_rest_call(endpoint=endpoint, action_result=action_result)
 
-        # Optional values should use the .get() function
-        optional_parameter = param.get('optional_parameter', 'default_value')
-        """
-
-        """
-        # make rest call
-        ret_val, response = self._make_rest_call('/endpoint', action_result, params=None, headers=None)
-
-        if (phantom.is_fail(ret_val)):
-            # the call to the 3rd party device or service failed, action result should contain all the error details
-            # so just return from here
+        # Something went wrong
+        if phantom.is_fail(ret_val):
             return action_result.get_status()
 
-        # Now post process the data,  uncomment code as you deem fit
+        # generate result
+        for content in response["data"]:
+            action_result.add_data(content)
 
-        # Add the response into the data section
-        # action_result.add_data(response)
-        """
-
-        action_result.add_data({})
-
-        # Add a dictionary that is made up of the most important values from data into the summary
         summary = action_result.update_summary({})
-        summary['important_data'] = "value"
+        summary['total_files'] = action_result.get_data_size()
 
-        # Return success, no need to set the message, only the status
-        # BaseConnector will create a textual message based off of the summary dictionary
-        # return action_result.set_status(phantom.APP_SUCCESS)
-
-        # For now return Error with a message, in case of success we don't set the message, but use the summary
-        return action_result.set_status(phantom.APP_ERROR, "Action not yet implemented")
+        return action_result.set_status(phantom.APP_SUCCESS)
 
     def handle_action(self, param):
         """ This function gets current action identifier and calls member function of its own to handle the action.
