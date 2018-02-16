@@ -26,7 +26,9 @@ from bs4 import BeautifulSoup
 
 
 class RetVal(tuple):
+
     def __new__(cls, val1, val2):
+
         return tuple.__new__(RetVal, (val1, val2))
 
 
@@ -185,8 +187,6 @@ class MolochConnector(BaseConnector):
         response obtained by making an API call
         """
 
-        config = self.get_config()
-
         resp_json = None
 
         try:
@@ -199,7 +199,7 @@ class MolochConnector(BaseConnector):
 
         try:
             r = request_func(url, auth=HTTPDigestAuth(self._username, self._password), json=data, headers=headers,
-                             verify=config.get('verify_server_cert', False), timeout=timeout, params=params)
+                             verify=self._verify_server_cert, timeout=timeout, params=params)
         except Exception as e:
             return RetVal(action_result.set_status(phantom.APP_ERROR, "Error Connecting to server. Details: {0}".
                                                    format(str(e))), resp_json)
@@ -219,7 +219,7 @@ class MolochConnector(BaseConnector):
         params = {'length': 1}
         endpoint = ':{port}{endpoint}'.format(port=self._port, endpoint=MOLOCH_TEST_CONNECTIVITY_ENDPOINT)
 
-        # make rest call
+        # make REST call
         ret_val, response = self._make_rest_call(endpoint=endpoint, params=params, action_result=action_result,
                                                  timeout=MOLOCH_TEST_CONNECTIVITY_TIMEOUT)
 
