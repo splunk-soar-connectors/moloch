@@ -1,0 +1,287 @@
+{
+  "appid": "ea7222af-ba72-4bd8-920e-f50c2a19f77f",
+  "name": "Moloch",
+  "description": "This app integrates with Moloch to support various investigative actions",
+  "type": "sandbox",
+  "product_vendor": "Moloch",
+  "logo": "moloch.png",
+  "product_name": "Moloch",
+  "product_version_regex": ".*",
+  "publisher": "Phantom",
+  "license": "Copyright (c) Phantom Cyber Corporation, 2018",
+  "app_version": "1.0.0",
+  "utctime_updated": "2018-02-16T05:19:26.933940Z",
+  "package_name": "phantom_moloch",
+  "main_module": "moloch_connector.pyc",
+  "min_phantom_version": "3.0.264",
+  "app_wizard_version": "1.0.0",
+  "configuration": {
+    "server_url": {
+      "description": "Server URL (e.g. http://10.10.10.10)",
+      "data_type": "string",
+      "required": true,
+      "order": 0
+    },
+    "port": {
+      "description": "Moloch port",
+      "data_type": "numeric",
+      "default": "8005",
+      "order": 1
+    },
+    "username": {
+      "description": "Username",
+      "data_type": "string",
+      "required": true,
+      "order": 2
+    },
+    "password": {
+      "description": "Password",
+      "data_type": "password",
+      "required": true,
+      "order": 3
+    },
+    "verify_server_cert": {
+      "description": "Verify Server Certificate",
+      "data_type": "boolean",
+      "default": false,
+      "order": 4
+    }
+  },
+  "actions": [
+    {
+      "action": "test connectivity",
+      "identifier": "test_connectivity",
+      "description": "Validate the asset configuration for connectivity using supplied configuration",
+      "type": "test",
+      "read_only": true,
+      "parameters": {},
+      "output": [],
+      "versions": "EQ(*)"
+    },
+    {
+      "action": "get pcap",
+      "identifier": "get_pcap",
+      "description": "Download the pcap file of a sample from server and add it to the vault",
+      "verbose": "",
+      "type": "investigate",
+      "read_only": true,
+      "parameters": {
+        "source_ip": {
+          "description": "Source IP",
+          "data_type": "string",
+          "required": false,
+          "primary": true,
+          "contains": [
+            "ip"
+          ],
+          "value_list": [],
+          "default": "",
+          "order": 0
+        },
+        "destination_ip": {
+          "description": "Destination IP",
+          "data_type": "string",
+          "required": false,
+          "primary": true,
+          "contains": [
+            "ip"
+          ],
+          "value_list": [],
+          "default": "",
+          "order": 1
+        },
+        "start_time": {
+          "description": "Start time in epoch",
+          "data_type": "string",
+          "required": false,
+          "primary": false,
+          "contains": [],
+          "value_list": [],
+          "default": "",
+          "order": 2
+        },
+        "end_time": {
+          "description": "End time in epoch",
+          "data_type": "string",
+          "required": false,
+          "primary": false,
+          "contains": [],
+          "value_list": [],
+          "default": "",
+          "order": 3
+        },
+        "hostname": {
+          "description": "Hostname",
+          "data_type": "string",
+          "required": false,
+          "primary": true,
+          "contains": [
+            "host name"
+          ],
+          "value_list": [],
+          "default": "",
+          "order": 4
+        },
+        "custom_query": {
+          "description": "Custom query",
+          "data_type": "string",
+          "required": false,
+          "primary": false,
+          "contains": [],
+          "value_list": [],
+          "default": "",
+          "order": 5
+        }
+      },
+      "output": [
+        {
+          "data_path": "action_result.parameter.source_ip",
+          "data_type": "string",
+          "contains": [
+            "ip"
+          ],
+          "column_name": "source_ip",
+          "column_order": 0
+        },
+        {
+          "data_path": "action_result.parameter.destination_ip",
+          "data_type": "string",
+          "contains": [
+            "ip"
+          ],
+          "column_name": "destination_ip",
+          "column_order": 1
+        },
+        {
+          "data_path": "action_result.parameter.start_time",
+          "data_type": "string",
+          "contains": [],
+          "column_name": "start_time",
+          "column_order": 2
+        },
+        {
+          "data_path": "action_result.parameter.end_time",
+          "data_type": "string",
+          "contains": [],
+          "column_name": "end_time",
+          "column_order": 3
+        },
+        {
+          "data_path": "action_result.parameter.hostname",
+          "data_type": "string",
+          "contains": [
+            "host name"
+          ],
+          "column_name": "hostname",
+          "column_order": 4
+        },
+        {
+          "data_path": "action_result.parameter.custom_query",
+          "data_type": "string",
+          "contains": [],
+          "column_name": "custom_query",
+          "column_order": 5
+        },
+        {
+          "data_path": "action_result.status",
+          "data_type": "string",
+          "column_name": "status",
+          "column_order": 6
+        },
+        {
+          "data_path": "action_result.message",
+          "data_type": "string"
+        },
+        {
+          "data_path": "summary.total_objects",
+          "data_type": "numeric"
+        },
+        {
+          "data_path": "summary.total_objects_successful",
+          "data_type": "numeric"
+        }
+      ],
+      "render": {
+        "type": "table"
+      },
+      "versions": "EQ(*)"
+    },
+    {
+      "action": "list fields",
+      "identifier": "list_fields",
+      "description": "List all fields",
+      "verbose": "",
+      "type": "investigate",
+      "read_only": true,
+      "parameters": {
+        "port": {
+          "description": "Elasticsearch port",
+          "data_type": "numeric",
+          "primary": true,
+          "contains": [
+            "port"
+          ],
+          "default": 9200,
+          "order": 0
+        }
+      },
+      "output": [
+        {
+          "data_path": "action_result.status",
+          "data_type": "string",
+          "column_name": "status",
+          "column_order": 0
+        },
+        {
+          "data_path": "action_result.message",
+          "data_type": "string"
+        },
+        {
+          "data_path": "summary.total_objects",
+          "data_type": "numeric"
+        },
+        {
+          "data_path": "summary.total_objects_successful",
+          "data_type": "numeric"
+        }
+      ],
+      "render": {
+        "type": "table"
+      },
+      "versions": "EQ(*)"
+    },
+    {
+      "action": "list files",
+      "identifier": "list_files",
+      "description": "List all files",
+      "verbose": "",
+      "type": "investigate",
+      "read_only": true,
+      "parameters": {},
+      "output": [
+        {
+          "data_path": "action_result.status",
+          "data_type": "string",
+          "column_name": "status",
+          "column_order": 0
+        },
+        {
+          "data_path": "action_result.message",
+          "data_type": "string"
+        },
+        {
+          "data_path": "summary.total_objects",
+          "data_type": "numeric"
+        },
+        {
+          "data_path": "summary.total_objects_successful",
+          "data_type": "numeric"
+        }
+      ],
+      "render": {
+        "type": "table"
+      },
+      "versions": "EQ(*)"
+    }
+  ]
+}
