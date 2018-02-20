@@ -29,6 +29,10 @@ def get_ctx_result(provides, result):
     summary = result.get_summary()
     data = result.get_data()
 
+    if provides == 'get pcap':
+        param['start_time'] = '{}Z'.format(datetime.utcfromtimestamp(int(param['start_time'])))
+        param['end_time'] = '{}Z'.format(datetime.utcfromtimestamp(int(param['end_time'])).isoformat())
+
     ctx_result['param'] = param
 
     if summary:
@@ -61,6 +65,13 @@ def _parse_data(data, provides):
             else:
                 item['locked'] = True
 
+    if provides == "list fields":
+        for index, item in enumerate(data):
+            if item.get('_id'):
+                data[index]['id'] = item['_id']
+            if item.get('_source'):
+                data[index]['source'] = item['_source']
+
     return data
 
 
@@ -86,5 +97,7 @@ def display_view(provides, all_app_runs, context):
         return_page = "moloch_list_files.html"
     elif provides == "list fields":
         return_page = "moloch_list_fields.html"
+    elif provides == "get pcap":
+        return_page = "moloch_get_pcap.html"
 
     return return_page
