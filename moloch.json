@@ -138,7 +138,6 @@
             "dc92fe345c7c8c846053fe379797353db92a540a"
           ],
           "contains": [
-            "sha1",
             "vault id"
           ]
         },
@@ -174,7 +173,6 @@
             "dc92fe345c7c8c846053fe379797353db92a540a"
           ],
           "contains": [
-            "sha1",
             "vault id"
           ]
         },
