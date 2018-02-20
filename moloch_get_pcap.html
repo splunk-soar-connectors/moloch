@@ -1,0 +1,264 @@
+{% extends 'widgets/widget_template.html' %}
+{% load custom_template %}
+
+{% block title_color %}{{ title_color|default:'white' }}{{% endblock %}
+{% block title_text_color %}{{ title_text_color|default:'rgb(101, 71, 150)' }}{% endblock %}
+{% block body_color %}{{ body_color|default:'white' }}{% endblock %}
+{% block body_text_color %}{{ body_text_color|default:'black' }}{% endblock %}
+{% block custom_title_prop %}{% if title_logo %}style="background-size: auto 60%; background-position: 50%; background-repeat: no-repeat; background-image: url('/app_resource/{{ title_logo }}');"{% endif %}{% endblock %}
+{% block title1 %}{{ title1 }}{% endblock %}
+{% block title2 %}{{ title2 }}{% endblock %}
+{% block custom_tools %}
+{% endblock %}
+
+{% block widget_content %} <!-- Main Start Block -->
+
+<!--
+--
+File: moloch_get_pcap.html
+
+Copyright (c) Phantom Cyber Corporation, 2018
+
+This unpublished material is proprietary to Phantom Cyber.
+All rights reserved. The methods and
+techniques described herein are considered trade secrets
+and/or confidential. Reproduction or distribution, in whole
+or in part, is forbidden except by express written permission
+of Phantom Cyber Corporation.
+
+--
+-->
+
+<style>
+
+    .moloch a:link {
+    color: black;
+    }
+
+    .moloch a:hover {
+    text-decoration:underline;
+    }
+
+    .moloch a:visited {
+    color: black;
+    }
+
+    .moloch .wf-h4-style {
+    font-size : 16px
+    }
+
+    .moloch .wf-h3-style {
+    font-size : 14px
+    }
+
+    .moloch .pcap_table {
+        width: 100%;
+        overflow-x: auto;
+    }
+
+    .moloch .dataTable th.widget-th {
+        border-top: 1px solid #eee !important;
+    }
+
+    .moloch .dataTable td {
+        color: #000 !important;
+    }
+
+    .moloch .dataTable td.widget-td a{
+        font-size: 12px;
+        color: #000;
+    }
+
+    .moloch .wf-table-vertical {
+    width: initial;
+    font-size: 12px;
+    }
+
+    .moloch .wf-table-vertical td{
+    padding: 5px;
+    border: 1px solid rgb(234, 234, 234) !important;
+    }
+
+    .moloch .wf-table-vertical td a{
+    color: #505050;
+    }
+
+
+    .moloch .wf-table-vertical th{
+    border: 1px solid rgb(234, 234, 234) !important;
+    }
+
+    .moloch .wf-table-vertical tr td:first-child {
+    font-weight: bold;
+    }
+
+</style>
+
+<div class="moloch" style="overflow: auto; width: 100%; height: 100%; padding-left:10px; padding-right:10px"> <!-- Main Div -->
+
+    {% for result in results %} <!-- loop for each result -->
+
+        {% if not result.data %}
+            <h4 class="wf-h4-style">No data found</h4>
+
+        {% else %}
+
+            <h3 class="wf-h3-style">Info</h3>
+            <table class="wf-table-vertical">
+                <tr>
+                    <th class="widget-th">
+                        Start time
+                    </th>
+                    <td>
+                        {{result.param.start_time}}
+                    </td>
+                </tr>
+                <tr>
+                    <th class="widget-th">
+                        End time
+                    </th>
+                    <td>
+                        {{result.param.end_time}}
+                    </td>
+                </tr>
+                    {% if result.param.source_ip %}
+                    <tr>
+
+                        <th class="widget-th">
+                            Source IP
+                        </th>
+                        <td>
+                            <a href="javascript:;" onclick="context_menu(this, [{'contains': ['ip'], 'value':
+                                '{{ result.param.source_ip }}' }], 0, {{ container.id }}, null, false);">
+                                {{ result.param.source_ip }}
+                                &nbsp;
+                                <span class="fa fa-caret-down" style="font-size: smaller;"></span>
+                            </a>
+                        </td>
+                    </tr>
+                    {% endif %}
+                    {% if result.param.destination_ip %}
+                    <tr>
+                        <th class="widget-th">
+                            Destination IP
+                        </th>
+                        <td>
+                            <a href="javascript:;" onclick="context_menu(this, [{'contains': ['ip'], 'value':
+                                '{{ result.param.destination_ip }}' }], 0, {{ container.id }}, null, false);">
+                                {{ result.param.destination_ip }}
+                                &nbsp;
+                                <span class="fa fa-caret-down" style="font-size: smaller;"></span>
+                            </a>
+                        </td>
+                    </tr>
+                    {% endif %}
+                    {% if result.param.hostname %}
+                    <tr>
+                        <th class="widget-th">
+                            Hostname
+                        </th>
+                        <td>
+                            <a href="javascript:;" onclick="context_menu(this, [{'contains': ['host name'], 'value':
+                                '{{ result.param.hostname }}' }], 0, {{ container.id }}, null, false);">
+                                {{ result.param.hostname }}
+                                &nbsp;
+                                <span class="fa fa-caret-down" style="font-size: smaller;"></span>
+                            </a>
+                        </td>
+                    </tr>
+                    {% endif %}
+                    {% if result.param.custom_query %}
+                    <tr>
+                        <th class="widget-th">
+                            Custom Query
+                        </th>
+                        <td>
+                            <a href="javascript:;" onclick="context_menu(this, [{'contains': ['moloch query'], 'value':
+                                '{{ result.param.custom_query }}' }], 0, {{ container.id }}, null, false);">
+                                {{ result.param.custom_query }}
+                                &nbsp;
+                                <span class="fa fa-caret-down" style="font-size: smaller;"></span>
+                            </a>
+                        </td>
+                    </tr>
+                    {% endif %}
+                <tr>
+                    {% if result.param.length %}
+                        <th class="widget-th">
+                            Length
+                        </th>
+                        <td>
+                            100
+                        </td>
+                    {% endif %}
+                </tr>
+            </table>
+
+            <h3 class="wf-h3-style">Fields(s) Info</h3>
+        <div class="pcap_table">
+            <table class="phantom-table dataTable">
+                <thead>
+                    <tr>
+                        <th class="widget-th">File Name</th>
+                        <th class="widget-th">Vault ID</th>
+                        <th class="widget-th">File Size</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in result.data %}
+                        <tr>
+                            <td>
+                                <a href="javascript:;" onclick="context_menu(this, [{'contains': ['file name'], 'value':
+                                '{{ item.file_name }}' }], 0, {{ container.id }}, null, false);">
+                                {{ item.file_name }}
+                                &nbsp;
+                                <span class="fa fa-caret-down" style="font-size: smaller;"></span>
+                                </a>
+                            </td>
+                            <td>
+                                <a href="javascript:;" onclick="context_menu(this, [{'contains': ['vault id'], 'value':
+                                '{{ item.vault_id }}' }], 0, {{ container.id }}, null, false);">
+                                {{ item.vault_id }}
+                                &nbsp;
+                                <span class="fa fa-caret-down" style="font-size: smaller;"></span>
+                                </a>
+                            </td>
+                            <td>
+                                <a href="javascript:;" onclick="context_menu(this, [{'contains': ['file size'], 'value':
+                                '{{ item.size }}' }], 0, {{ container.id }}, null, false);">
+                                {{ item.size }}
+                                &nbsp;
+                                <span class="fa fa-caret-down" style="font-size: smaller;"></span>
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+    {% endfor %}
+</div>
+
+<script>
+$.extend(true, $.fn.dataTable.defaults, {
+    "searching": true,
+    "bLengthChange": false,
+    "language": {
+      "paginate": {
+        "previous": "<i class='fa fa-angle-left fa-lg'></i>",
+        "next": "<i class='fa fa-angle-right fa-lg'></i>"
+      },
+      "emptyTable": "No data available"
+    },
+    "dom": '<"top">rt<"bottom"p><"clear">',
+    drawCallback: function(settings) {
+      var pagination = $(this).closest('.dataTables_wrapper').find('.dataTables_paginate');
+      pagination.toggle(this.api().page.info().pages > 1);
+    }
+  });
+  $('.dataTable').DataTable();
+
+</script>
+
+{% endblock %}
