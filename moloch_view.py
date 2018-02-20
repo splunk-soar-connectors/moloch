@@ -84,5 +84,7 @@ def display_view(provides, all_app_runs, context):
 
     if provides == "list files":
         return_page = "moloch_list_files.html"
+    elif provides == "list fields":
+        return_page = "moloch_list_fields.html"
 
     return return_page

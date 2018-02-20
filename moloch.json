@@ -210,7 +210,6 @@
       "action": "list fields",
       "identifier": "list_fields",
       "description": "List all fields",
-      "verbose": "",
       "type": "investigate",
       "read_only": true,
       "parameters": {
@@ -227,26 +226,177 @@
       },
       "output": [
         {
+          "data_path": "action_result.data.*._score",
+          "data_type": "numeric",
+          "example_values": [
+            1
+          ]
+        },
+        {
+          "data_path": "action_result.data.*._type",
+          "data_type": "string",
+          "example_values": [
+            "field"
+          ]
+        },
+        {
+          "data_path": "action_result.data.*._id",
+          "data_type": "string",
+          "example_values": [
+            "ip"
+          ]
+        },
+        {
+          "data_path": "action_result.data.*._index",
+          "data_type": "string",
+          "example_values": [
+            "fields_v1"
+          ]
+        },
+        {
+          "data_path": "action_result.data.*._source.group",
+          "data_type": "string",
+          "example_values": [
+            "general"
+          ]
+        },
+        {
+          "data_path": "action_result.data.*._source.help",
+          "data_type": "string",
+          "example_values": [
+            "Search all ip fields"
+          ]
+        },
+        {
+          "data_path": "action_result.data.*._source.portField",
+          "data_type": "string",
+          "example_values": [
+            "portall"
+          ]
+        },
+        {
+          "data_path": "action_result.data.*._source.noFacet",
+          "data_type": "string",
+          "example_values": [
+            "true"
+          ]
+        },
+        {
+          "data_path": "action_result.data.*._source.friendlyName",
+          "data_type": "string",
+          "example_values": [
+            "All IP fields"
+          ]
+        },
+        {
+          "data_path": "action_result.data.*._source.type",
+          "data_type": "string",
+          "example_values": [
+            "ip"
+          ]
+        },
+        {
+          "data_path": "action_result.data.*._source.dbField",
+          "data_type": "string",
+          "example_values": [
+            "ipall"
+          ]
+        },
+        {
+          "data_path": "action_result.data.*._source.regex",
+          "data_type": "string",
+          "example_values": [
+            "(^port\\.(?:(?!\\.cnt$).)*$|\\.port$)"
+          ]
+        },
+        {
+          "data_path": "action_result.data.*._source.category",
+          "data_type": "string",
+          "example_values": [
+            "host"
+          ]
+        },
+        {
+          "data_path": "action_result.data.*._source.rawField",
+          "data_type": "string",
+          "example_values": [
+            "rawas1"
+          ]
+        },
+        {
+          "data_path": "action_result.data.*._source.transform",
+          "data_type": "string",
+          "example_values": [
+            "ipProtocolLookup"
+          ]
+        },
+        {
+          "data_path": "action_result.data.*._source.aliases",
+          "data_type": "string",
+          "example_values": [
+            "socks.port"
+          ]
+        },
+        {
+          "data_path": "action_result.data.*._source.requiredRight",
+          "data_type": "string",
+          "example_values": [
+            "emailSearch"
+          ]
+        },
+        {
           "data_path": "action_result.status",
           "data_type": "string",
-          "column_name": "status",
-          "column_order": 0
+          "example_values": [
+            "success",
+            "failed"
+          ]
         },
         {
           "data_path": "action_result.message",
-          "data_type": "string"
+          "data_type": "string",
+          "example_values": [
+            "Total fields: 250"
+          ]
+        },
+        {
+          "data_path": "action_result.parameter.port",
+          "data_type": "numeric",
+          "contains": [
+            "port"
+          ],
+          "example_values": [
+            9200
+          ]
+        },
+        {
+          "data_path": "action_result.summary.total_fields",
+          "data_type": "numeric",
+          "example_values": [
+            250
+          ]
         },
         {
           "data_path": "summary.total_objects",
-          "data_type": "numeric"
+          "data_type": "numeric",
+          "example_values": [
+            1
+          ]
         },
         {
           "data_path": "summary.total_objects_successful",
-          "data_type": "numeric"
+          "data_type": "numeric",
+          "example_values": [
+            1
+          ]
         }
       ],
       "render": {
-        "type": "table"
+        "type": "custom",
+        "width": 12,
+        "height": 5,
+        "view": "moloch_view.display_view",
+        "title": "FIELD LIST"
       },
       "versions": "EQ(*)"
     },
@@ -323,7 +473,7 @@
           "data_type": "numeric",
           "example_values": [
             2
-         ]
+          ]
         },
         {
           "data_path": "summary.total_objects",
