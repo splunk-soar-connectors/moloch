@@ -106,13 +106,23 @@ of Phantom Cyber Corporation.
                     Port
                 </th>
                 <td>
-                    <a href="javascript:;"
-                        onclick="context_menu(this, [{'contains': ['port'], 'value':
-                        '{{ result.param.port }}' }], 0, {{ container.id }}, null, false);">
-                        {{ result.param.port }}
-                        &nbsp;
-                        <span class="fa fa-caret-down" style="font-size: smaller;"></span>
-                    </a>
+                    {% if result.param.port %}
+                        <a href="javascript:;"
+                            onclick="context_menu(this, [{'contains': ['port'], 'value':
+                            '{{ result.param.port }}' }], 0, {{ container.id }}, null, false);">
+                            {{ result.param.port }}
+                            &nbsp;
+                            <span class="fa fa-caret-down" style="font-size: smaller;"></span>
+                        </a>
+                    {% else %}
+                        <a href="javascript:;"
+                            onclick="context_menu(this, [{'contains': ['port'], 'value':
+                            '9200' }], 0, {{ container.id }}, null, false);">
+                            9200
+                            &nbsp;
+                            <span class="fa fa-caret-down" style="font-size: smaller;"></span>
+                        </a>
+                    {% endif %}
                 </td>
             </tr>
         </table>

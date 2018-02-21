@@ -455,6 +455,10 @@ class MolochConnector(BaseConnector):
 
         # Something went wrong
         if phantom.is_fail(ret_val):
+            message = action_result.get_message()
+            if ("Status Code: 200" in message) and ("angular.module" in message):
+                action_result.set_status(phantom.APP_ERROR, "Unable to connect to server. "
+                                                            "Please make sure that entered port is correct")
             return action_result.get_status()
 
         # generate result
