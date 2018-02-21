@@ -113,7 +113,7 @@
           ],
           "primary": true
         },
-        "length": {
+        "limit": {
           "description": "Max no of sessions to return (Default: 100)",
           "data_type": "numeric",
           "default": 100,
@@ -231,7 +231,7 @@
           ]
         },
         {
-          "data_path": "action_result.parameter.length",
+          "data_path": "action_result.parameter.limit",
           "data_type": "numeric",
           "example_values": [
             10

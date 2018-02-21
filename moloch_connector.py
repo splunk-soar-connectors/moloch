@@ -333,20 +333,20 @@ class MolochConnector(BaseConnector):
             self.debug_print(MOLOCH_INVALID_TIME_RANGE)
             return action_result.set_status(phantom.APP_ERROR, status_message=MOLOCH_INVALID_TIME_RANGE)
 
-        # Validate parameter length
+        # Validate parameter limit
         try:
-            length = int(float(param.get(MOLOCH_JSON_LENGTH, 100)))
+            limit = int(float(param.get(MOLOCH_JSON_LIMIT, 100)))
         except:
-            self.debug_print(MOLOCH_INVALID_LENGTH_MSG)
-            return action_result.set_status(phantom.APP_ERROR, status_message=MOLOCH_INVALID_LENGTH_MSG)
+            self.debug_print(MOLOCH_INVALID_LIMIT_MSG)
+            return action_result.set_status(phantom.APP_ERROR, status_message=MOLOCH_INVALID_LIMIT_MSG)
 
-        # Validate parameter length
-        if length < 0:
-            self.debug_print(MOLOCH_INVALID_LENGTH_MSG)
-            return action_result.set_status(phantom.APP_ERROR, status_message=MOLOCH_INVALID_LENGTH_MSG)
+        # Validate parameter limit
+        if limit < 0:
+            self.debug_print(MOLOCH_INVALID_LIMIT_MSG)
+            return action_result.set_status(phantom.APP_ERROR, status_message=MOLOCH_INVALID_LIMIT_MSG)
 
         params = dict()
-        params['length'] = length
+        params['length'] = limit
         params['startTime'] = start_time
         params['stopTime'] = end_time
 
