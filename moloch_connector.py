@@ -72,6 +72,9 @@ class MolochConnector(BaseConnector):
         # Custom validation for IP address
         self.set_validator(MOLOCH_PARAM_IP, self._is_ip)
 
+        if not self._server_url.startswith('http'):
+            self._server_url = 'http://{url}'.format(url=self._server_url)
+
         return phantom.APP_SUCCESS
 
     def _is_ip(self, ip_address):
