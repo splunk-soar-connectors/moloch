@@ -15,7 +15,7 @@
 
 <!--
 --
-File: moloch_list_files.html
+File: moloch_list_fields.html
 
 Copyright (c) Phantom Cyber Corporation, 2018
 
@@ -132,11 +132,18 @@ of Phantom Cyber Corporation.
             <tbody>
                 {% for item in result.data %}
                     <tr>
-
-                        <td>{{item|by_key:'_id'}}</td>
-                        <td>{{item|by_key:'_source'|by_key:'friendlyName'}}</td>
-                        <td>{{item|by_key:'_source'|by_key:'help'}}</td>
-                        <td>{{item|by_key:'_source'|by_key:'type'}}</td>
+                        <td>
+                            <a href="javascript:;"
+                            onclick="context_menu(this, [{'contains': ['moloch query'], 'value':
+                            '{{ item.id }}' }], 0, {{ container.id }}, null, false);">
+                            {{ item.id }}
+                            &nbsp;
+                            <span class="fa fa-caret-down" style="font-size: smaller;"></span>
+                            </a>
+                        </td>
+                        <td>{{item.source.friendlyName}}</td>
+                        <td>{{item.source.help}}</td>
+                        <td>{{item.source.type}}</td>
                     </tr>
                 {% endfor %}
             </tbody>
