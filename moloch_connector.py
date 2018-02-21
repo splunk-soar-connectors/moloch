@@ -64,7 +64,7 @@ class MolochConnector(BaseConnector):
 
         # Access values in asset config by the name
         self._server_url = config[MOLOCH_CONFIG_SERVER_URL].strip('/')
-        self._port = int(config.get(MOLOCH_CONFIG_PORT, 8005))
+        self._port = config.get(MOLOCH_CONFIG_PORT, 8005)
         self._username = config[MOLOCH_CONFIG_USERNAME]
         self._password = config[MOLOCH_CONFIG_PASSWORD]
         self._verify_server_cert = config.get(MOLOCH_VERIFY_SERVER_CERT, False)
@@ -273,6 +273,11 @@ class MolochConnector(BaseConnector):
         action_result = self.add_action_result(ActionResult(dict(param)))
         self.save_progress(MOLOCH_TEST_CONNECTION)
 
+        if not str(self._port).isdigit() or int(self._port) not in range(0, 65536):
+            self.save_progress(MOLOCH_TEST_CONNECTIVITY_FAILED)
+            return action_result.set_status(phantom.APP_ERROR, status_message='{}. {}'.format(MOLOCH_CONNECTING_ERROR_MSG,
+                                                                                              MOLOCH_INVALID_CONFIG_PORT))
+
         params = {'length': 1}
         endpoint = ':{port}{endpoint}'.format(port=self._port, endpoint=MOLOCH_TEST_CONNECTIVITY_ENDPOINT)
 
@@ -297,6 +302,10 @@ class MolochConnector(BaseConnector):
         self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
         action_result = self.add_action_result(ActionResult(dict(param)))
         summary = action_result.update_summary({})
+
+        if not str(self._port).isdigit() or int(self._port) not in range(0, 65536):
+            self.debug_print(MOLOCH_INVALID_CONFIG_PORT)
+            return action_result.set_status(phantom.APP_ERROR, status_message=MOLOCH_INVALID_CONFIG_PORT)
 
         start_time = int(param[MOLOCH_JSON_START_TIME])
         end_time = int(param[MOLOCH_JSON_END_TIME])
@@ -435,6 +444,10 @@ class MolochConnector(BaseConnector):
         action_result = self.add_action_result(ActionResult(dict(param)))
         port = param.get(MOLOCH_PARAM_PORT, 9200)
 
+        if not str(port).isdigit() or int(port) not in range(0, 65536):
+            self.debug_print(MOLOCH_INVALID_PARAM_PORT)
+            return action_result.set_status(phantom.APP_ERROR, status_message=MOLOCH_INVALID_PARAM_PORT)
+
         endpoint = ':{port}{endpoint}'.format(port=port, endpoint=MOLOCH_LIST_FIELDS_ENDPOINT)
 
         # make REST call
@@ -461,6 +474,10 @@ class MolochConnector(BaseConnector):
         """
 
         action_result = self.add_action_result(ActionResult(dict(param)))
+
+        if not str(self._port).isdigit() or int(self._port) not in range(0, 65536):
+            self.debug_print(MOLOCH_INVALID_CONFIG_PORT)
+            return action_result.set_status(phantom.APP_ERROR, status_message=MOLOCH_INVALID_CONFIG_PORT)
 
         endpoint = ':{port}{endpoint}'.format(port=self._port, endpoint=MOLOCH_LIST_FILES_ENDPOINT)
 
