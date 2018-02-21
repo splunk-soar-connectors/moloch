@@ -266,7 +266,7 @@
       "read_only": true,
       "parameters": {
         "port": {
-          "description": "Elasticsearch port",
+          "description": "Elasticsearch port (Default: 9200)",
           "data_type": "numeric",
           "primary": true,
           "contains": [
