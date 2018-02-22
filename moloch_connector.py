@@ -349,7 +349,7 @@ class MolochConnector(BaseConnector):
             return action_result.set_status(phantom.APP_ERROR, status_message=MOLOCH_INVALID_LIMIT_MSG)
 
         # Validate parameter limit
-        if limit < 0:
+        if limit not in range(0, 2000001):
             self.debug_print(MOLOCH_INVALID_LIMIT_MSG)
             return action_result.set_status(phantom.APP_ERROR, status_message=MOLOCH_INVALID_LIMIT_MSG)
 
