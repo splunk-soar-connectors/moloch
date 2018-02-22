@@ -418,6 +418,10 @@ class MolochConnector(BaseConnector):
             self.debug_print(MOLOCH_NO_DATA_FOUND_MSG)
             return action_result.set_status(phantom.APP_ERROR, status_message=MOLOCH_NO_DATA_FOUND_MSG)
 
+        invalid_chars = '[]<>/\():;"\'|*()`~!@#$%^&+={}?,'
+
+        # Remove special character defined in invalid_chars form filename
+        filename = filename.translate(None, invalid_chars)
         vault_file_list = Vault.get_file_info(file_name=filename)
 
         # Iterate through files of Vault
