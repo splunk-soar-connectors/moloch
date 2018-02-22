@@ -303,6 +303,7 @@ class MolochConnector(BaseConnector):
         action_result = self.add_action_result(ActionResult(dict(param)))
         summary = action_result.update_summary({})
 
+        # Validate port
         if not str(self._port).isdigit() or int(self._port) not in range(0, 65536):
             self.debug_print(MOLOCH_INVALID_CONFIG_PORT)
             return action_result.set_status(phantom.APP_ERROR, status_message=MOLOCH_INVALID_CONFIG_PORT)
@@ -396,12 +397,24 @@ class MolochConnector(BaseConnector):
         if hostname:
             filename += '_hostname_{hostname}'.format(hostname=hostname)
 
+        filename += '_limit_{limit}'.format(limit=limit)
+
         filename += '.pcap'
 
         temp_file_path = '{dir}{asset}_temp_pcap_file'.format(dir=self.get_state_dir(), asset=self.get_asset_id())
+
+        # If file size is zero
+        if not os.path.getsize(temp_file_path):
+            # Delete file
+            os.unlink(temp_file_path)
+            self.debug_print(MOLOCH_NO_DATA_FOUND_MSG)
+            return action_result.set_status(phantom.APP_ERROR, status_message=MOLOCH_NO_DATA_FOUND_MSG)
+
         vault_file_list = Vault.get_file_info(file_name=filename)
 
+        # Iterate through files of Vault
         for file in vault_file_list:
+            # If file name and file size are same file is duplicate
             if file.get('name') == filename and file.get('size') == os.path.getsize(temp_file_path):
                 self.debug_print(MOLOCH_FILE_ALREADY_AVAILABLE)
 
@@ -411,7 +424,8 @@ class MolochConnector(BaseConnector):
                     'file_name': filename
                 }
                 summary['vault_id'] = file.get('vault_id')
-
+                # Delete temp file
+                os.unlink(temp_file_path)
                 action_result.add_data(vault_file_details)
                 return action_result.set_status(phantom.APP_SUCCESS)
 
