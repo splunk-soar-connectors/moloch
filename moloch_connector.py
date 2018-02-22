@@ -72,9 +72,6 @@ class MolochConnector(BaseConnector):
         # Custom validation for IP address
         self.set_validator(MOLOCH_PARAM_IP, self._is_ip)
 
-        if not self._server_url.startswith('http'):
-            self._server_url = 'http://{url}'.format(url=self._server_url)
-
         return phantom.APP_SUCCESS
 
     def _is_ip(self, ip_address):
@@ -280,8 +277,8 @@ class MolochConnector(BaseConnector):
         # Validate port
         if not str(self._port).isdigit() or int(self._port) not in range(0, 65536):
             self.save_progress(MOLOCH_TEST_CONNECTIVITY_FAILED)
-            return action_result.set_status(phantom.APP_ERROR, status_message='{}. {}'.format(MOLOCH_CONNECTING_ERROR_MSG,
-                                                                                              MOLOCH_INVALID_CONFIG_PORT))
+            return action_result.set_status(phantom.APP_ERROR, status_message='{}. {}'.format(
+                MOLOCH_CONNECTING_ERROR_MSG, MOLOCH_INVALID_CONFIG_PORT))
 
         params = {'length': 1}
         endpoint = ':{port}{endpoint}'.format(port=self._port, endpoint=MOLOCH_TEST_CONNECTIVITY_ENDPOINT)
@@ -320,7 +317,7 @@ class MolochConnector(BaseConnector):
         dest_ip = param.get(MOLOCH_JSON_DESTINATION_IP)
         hostname = param.get(MOLOCH_JSON_HOSTNAME)
         custom_query = param.get(MOLOCH_JSON_CUSTOM_QUERY)
-        limit = param.get(MOLOCH_JSON_LIMIT, 100)
+        limit = param.get(MOLOCH_JSON_LIMIT, 50)
 
         # Validate start_time parameter
         try:
@@ -482,12 +479,12 @@ class MolochConnector(BaseConnector):
         # Something went wrong
         if phantom.is_fail(ret_val):
             message = action_result.get_message()
-            if ("Status Code: 200" in message) and ("angular.module" in message):
+            if "Status Code: 200" in message and "angular.module" in message:
                 action_result.set_status(phantom.APP_ERROR, "Unable to connect to server. "
                                                             "Please make sure that entered port is correct")
             return action_result.get_status()
 
-        # Add result
+        # Add data to action_result
         for content in response["hits"]["hits"]:
             action_result.add_data(content)
 
@@ -519,7 +516,7 @@ class MolochConnector(BaseConnector):
         if phantom.is_fail(ret_val):
             return action_result.get_status()
 
-        # Add result
+        # Add data to action_result
         for content in response["data"]:
             action_result.add_data(content)
 
