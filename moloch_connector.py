@@ -84,6 +84,7 @@ class MolochConnector(BaseConnector):
         :return: status (success/failure)
         """
 
+        # Throws exception if IP is not valid IPv4 or IPv6
         try:
             ipaddress.ip_address(unicode(ip_address))
         except Exception as e:
@@ -240,14 +241,17 @@ class MolochConnector(BaseConnector):
             return RetVal(action_result.set_status(phantom.APP_ERROR, "Invalid method: {0}".format(method)), resp_json)
 
         # Create a URL to connect to
-        url = self._server_url + endpoint
+        url = '{url}{endpoint}'.format(url=self._server_url, endpoint=endpoint)
 
         try:
+            # In case of get_pcap action stream the response and store it into temp file
             if self.get_action_identifier() == 'get_pcap':
                 r = request_func(url, auth=HTTPDigestAuth(self._username, self._password), json=data, headers=headers,
                                  verify=self._verify_server_cert, timeout=timeout, params=params, stream=True)
+                # Create temp_file_path using asset_id
                 temp_file_path = '{dir}{asset}_temp_pcap_file'.format(dir=self.get_state_dir(),
                                                                       asset=self.get_asset_id())
+                # Store response into file
                 with open(temp_file_path, 'wb') as pcap_file:
                     for chunk in r.iter_content(chunk_size=1024):
                         if chunk:
@@ -273,6 +277,7 @@ class MolochConnector(BaseConnector):
         action_result = self.add_action_result(ActionResult(dict(param)))
         self.save_progress(MOLOCH_TEST_CONNECTION)
 
+        # Validate port
         if not str(self._port).isdigit() or int(self._port) not in range(0, 65536):
             self.save_progress(MOLOCH_TEST_CONNECTIVITY_FAILED)
             return action_result.set_status(phantom.APP_ERROR, status_message='{}. {}'.format(MOLOCH_CONNECTING_ERROR_MSG,
@@ -308,12 +313,14 @@ class MolochConnector(BaseConnector):
             self.debug_print(MOLOCH_INVALID_CONFIG_PORT)
             return action_result.set_status(phantom.APP_ERROR, status_message=MOLOCH_INVALID_CONFIG_PORT)
 
-        start_time = int(param[MOLOCH_JSON_START_TIME])
-        end_time = int(param[MOLOCH_JSON_END_TIME])
+        # Get parameters
+        start_time = param[MOLOCH_JSON_START_TIME]
+        end_time = param[MOLOCH_JSON_END_TIME]
         source_ip = param.get(MOLOCH_JSON_SOURCE_IP)
         dest_ip = param.get(MOLOCH_JSON_DESTINATION_IP)
         hostname = param.get(MOLOCH_JSON_HOSTNAME)
         custom_query = param.get(MOLOCH_JSON_CUSTOM_QUERY)
+        limit = param.get(MOLOCH_JSON_LIMIT, 100)
 
         # Validate start_time parameter
         try:
@@ -336,7 +343,7 @@ class MolochConnector(BaseConnector):
 
         # Validate parameter limit
         try:
-            limit = int(float(param.get(MOLOCH_JSON_LIMIT, 100)))
+            limit = int(float(limit))
         except:
             self.debug_print(MOLOCH_INVALID_LIMIT_MSG)
             return action_result.set_status(phantom.APP_ERROR, status_message=MOLOCH_INVALID_LIMIT_MSG)
@@ -353,24 +360,28 @@ class MolochConnector(BaseConnector):
 
         expression = ''
 
+        # Add source_ip to expression, if available
         if source_ip:
             expression = 'ip.src == {source_ip}'.format(source_ip=source_ip)
 
+        # Add dest_ip to expression, if available
         if dest_ip:
             if expression:
-                expression += ' && ip.dst == {dst_ip}'.format(dst_ip=dest_ip)
+                expression = '{expr} && ip.dst == {dst_ip}'.format(expr=expression, dst_ip=dest_ip)
             else:
                 expression = 'ip.dst == {dst_ip}'.format(dst_ip=dest_ip)
 
+        # Add hostname to expression, if available
         if hostname:
             if expression:
-                expression += ' && host.http == {hostname}'.format(hostname=hostname)
+                expression = '{expr} && host.http == {hostname}'.format(expr=expression, hostname=hostname)
             else:
                 expression = 'host.http == {hostname}'.format(hostname=hostname)
 
+        # Add custom_query to expression, if available
         if custom_query:
             if expression:
-                expression += ' && {query}'.format(query=custom_query)
+                expression = '{expr} && {query}'.format(expr=expression, query=custom_query)
             else:
                 expression = custom_query
 
@@ -379,7 +390,7 @@ class MolochConnector(BaseConnector):
 
         endpoint = ':{port}{endpoint}'.format(port=self._port, endpoint=MOLOCH_GET_PCAP_ENDPOINT)
 
-        # make rest call
+        # make REST call
         ret_val, response = self._make_rest_call(endpoint=endpoint, action_result=action_result, params=params)
 
         if phantom.is_fail(ret_val):
@@ -389,17 +400,17 @@ class MolochConnector(BaseConnector):
         filename = 'moloch_{start_time}_{end_time}'.format(start_time=start_time, end_time=end_time)
 
         if source_ip:
-            filename += '_src_ip_{source_ip}'.format(source_ip=source_ip)
+            filename = '{filename}_src_ip_{source_ip}'.format(filename=filename, source_ip=source_ip)
 
         if dest_ip:
-            filename += '_dst_ip_{dst_ip}'.format(dst_ip=dest_ip)
+            filename = '{filename}_dst_ip_{dst_ip}'.format(filename=filename, dst_ip=dest_ip)
 
         if hostname:
-            filename += '_hostname_{hostname}'.format(hostname=hostname)
+            filename = '{filename}_hostname_{hostname}'.format(filename=filename, hostname=hostname)
 
-        filename += '_limit_{limit}'.format(limit=limit)
+        filename = '{filename}_limit_{limit}'.format(filename=filename, limit=limit)
 
-        filename += '.pcap'
+        filename = '{filename}.pcap'.format(filename=filename)
 
         temp_file_path = '{dir}{asset}_temp_pcap_file'.format(dir=self.get_state_dir(), asset=self.get_asset_id())
 
@@ -458,6 +469,7 @@ class MolochConnector(BaseConnector):
         action_result = self.add_action_result(ActionResult(dict(param)))
         port = param.get(MOLOCH_PARAM_PORT, 9200)
 
+        # Validate port
         if not str(port).isdigit() or int(port) not in range(0, 65536):
             self.debug_print(MOLOCH_INVALID_PARAM_PORT)
             return action_result.set_status(phantom.APP_ERROR, status_message=MOLOCH_INVALID_PARAM_PORT)
@@ -475,7 +487,7 @@ class MolochConnector(BaseConnector):
                                                             "Please make sure that entered port is correct")
             return action_result.get_status()
 
-        # generate result
+        # Add result
         for content in response["hits"]["hits"]:
             action_result.add_data(content)
 
@@ -493,6 +505,7 @@ class MolochConnector(BaseConnector):
 
         action_result = self.add_action_result(ActionResult(dict(param)))
 
+        # Validate port
         if not str(self._port).isdigit() or int(self._port) not in range(0, 65536):
             self.debug_print(MOLOCH_INVALID_CONFIG_PORT)
             return action_result.set_status(phantom.APP_ERROR, status_message=MOLOCH_INVALID_CONFIG_PORT)
@@ -506,7 +519,7 @@ class MolochConnector(BaseConnector):
         if phantom.is_fail(ret_val):
             return action_result.get_status()
 
-        # generate result
+        # Add result
         for content in response["data"]:
             action_result.add_data(content)
 

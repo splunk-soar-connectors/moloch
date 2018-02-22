@@ -125,7 +125,7 @@
           "data_path": "action_result.data.*.file_name",
           "data_type": "string",
           "example_values": [
-            "moloch-1519018114-1519021714.pcap"
+            "moloch_1519018114_1519021714_limit_100.pcap"
           ],
           "contains": [
             "file name"
