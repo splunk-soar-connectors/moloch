@@ -248,11 +248,14 @@ class MolochConnector(BaseConnector):
                 # Create temp_file_path using asset_id
                 temp_file_path = '{dir}{asset}_temp_pcap_file'.format(dir=self.get_state_dir(),
                                                                       asset=self.get_asset_id())
-                # Store response into file
-                with open(temp_file_path, 'wb') as pcap_file:
-                    for chunk in r.iter_content(chunk_size=1024):
-                        if chunk:
-                            pcap_file.write(chunk)
+
+                # If API call is success
+                if 200 <= r.status_code < 399:
+                    # Store response into file
+                    with open(temp_file_path, 'wb') as pcap_file:
+                        for chunk in r.iter_content(chunk_size=1024):
+                            if chunk:
+                                pcap_file.write(chunk)
 
             else:
                 r = request_func(url, auth=HTTPDigestAuth(self._username, self._password), json=data, headers=headers,
