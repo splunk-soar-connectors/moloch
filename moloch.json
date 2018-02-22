@@ -62,7 +62,7 @@
       "action": "get pcap",
       "identifier": "get_pcap",
       "description": "Download the pcap file from server and add it to the vault",
-      "verbose": "Parameter 'limit' has a range of 0 to 2000000. Parameter 'custom_query' is case sensitive.",
+      "verbose": "Parameter <b>limit</b> has a range of 0 to 2000000.<br>Parameter <b>custom_query</b> is case sensitive. Example for custom query of get_pcap action<br>port.src == 80 || port.dst == 80 && country != USA",
       "type": "investigate",
       "read_only": true,
       "parameters": {
