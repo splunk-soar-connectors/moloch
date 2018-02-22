@@ -30,8 +30,13 @@ def get_ctx_result(provides, result):
     data = result.get_data()
 
     if provides == 'get pcap':
-        param['start_time'] = '{}Z'.format(datetime.utcfromtimestamp(int(param['start_time'])).isoformat())
-        param['end_time'] = '{}Z'.format(datetime.utcfromtimestamp(int(param['end_time'])).isoformat())
+        # If error occurs while converting epoch to iso time format
+        try:
+            param['start_time'] = '{}Z'.format(datetime.utcfromtimestamp(int(param['start_time'])).isoformat())
+            param['end_time'] = '{}Z'.format(datetime.utcfromtimestamp(int(param['end_time'])).isoformat())
+        except:
+            ctx_result['data'] = {}
+            return ctx_result
 
     ctx_result['param'] = param
 
