@@ -24,6 +24,7 @@ import requests
 import json
 import os
 import ipaddress
+import magic
 from requests.auth import HTTPDigestAuth
 from bs4 import BeautifulSoup
 
@@ -420,6 +421,21 @@ class MolochConnector(BaseConnector):
             os.unlink(temp_file_path)
             self.debug_print(MOLOCH_NO_DATA_FOUND_MSG)
             return action_result.set_status(phantom.APP_ERROR, status_message=MOLOCH_NO_DATA_FOUND_MSG)
+
+        # Check if file is text file
+        # mime=True only returns mimetypes instead of textual description
+        magic_obj = magic.Magic(mime=True)
+        file_type = magic_obj.from_file(temp_file_path)
+
+        if file_type == 'text/plain':
+            with open(temp_file_path) as temp_file:
+                temp_file_data = temp_file.read()
+
+            message = 'Error while getting data from server. {api_message}'.\
+                format(api_message=temp_file_data)
+
+            self.debug_print(message)
+            return action_result.set_status(phantom.APP_ERROR, status_message=message)
 
         invalid_chars = '[]<>/\():;"\'|*()`~!@#$%^&+={}?,'
 
