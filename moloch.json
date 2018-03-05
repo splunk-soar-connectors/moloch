@@ -14,7 +14,7 @@
     "utctime_updated": "2018-02-16T05:19:26.933940Z",
     "package_name": "phantom_moloch",
     "main_module": "moloch_connector.pyc",
-    "min_phantom_version": "3.0.264",
+    "min_phantom_version": "3.0.284",
     "app_wizard_version": "1.0.0",
     "configuration": {
         "server_url": {
@@ -116,7 +116,7 @@
                     "primary": true
                 },
                 "limit": {
-                    "description": "Max no of sessions to return (Default: 50)",
+                    "description": "Max number of sessions to return (Default: 50)",
                     "data_type": "numeric",
                     "default": 50,
                     "order": 6
