@@ -1,10 +1,6 @@
 {% extends 'widgets/widget_template.html' %}
 {% load custom_template %}
 
-{% block title_color %}{{ title_color|default:'white' }}{{% endblock %}
-{% block title_text_color %}{{ title_text_color|default:'rgb(101, 71, 150)' }}{% endblock %}
-{% block body_color %}{{ body_color|default:'white' }}{% endblock %}
-{% block body_text_color %}{{ body_text_color|default:'black' }}{% endblock %}
 {% block custom_title_prop %}{% if title_logo %}style="background-size: auto 60%; background-position: 50%; background-repeat: no-repeat; background-image: url('/app_resource/{{ title_logo }}');"{% endif %}{% endblock %}
 {% block title1 %}{{ title1 }}{% endblock %}
 {% block title2 %}{{ title2 }}{% endblock %}
@@ -13,58 +9,34 @@
 
 {% block widget_content %} <!-- Main Start Block -->
 
-<!--
---
-File: moloch_list_files.html
+<!-- File: moloch_list_files.html
+  Copyright (c) 2018 Splunk Inc.
 
-Copyright (c) Phantom Cyber Corporation, 2018
-
-This unpublished material is proprietary to Phantom Cyber.
-All rights reserved. The methods and
-techniques described herein are considered trade secrets
-and/or confidential. Reproduction or distribution, in whole
-or in part, is forbidden except by express written permission
-of Phantom Cyber Corporation.
-
---
+  SPLUNK CONFIDENTIAL – Use or disclosure of this material in whole or in part
+  without a valid written license from Splunk Inc. is PROHIBITED.
 -->
 
 <style>
-
-    .moloch a:link {
-    color: black;
-    }
-
     .moloch a:hover {
-    text-decoration:underline;
-    }
-
-    .moloch a:visited {
-    color: black;
+        text-decoration:underline;
     }
 
     .moloch .wf-h4-style {
-    font-size : 16px
-    }
-
-    .moloch .table {
-        width: 100%;
-        overflow-x: auto;
+        font-size : 20px;
     }
 
     .moloch .dataTable th.widget-th {
-        border-top: 1px solid #eee !important;
-    }
-
-    .moloch .dataTable td {
-        color: #000 !important;
+        border-top: 1px solid !important;
+        border-bottom: 1px solid !important;
     }
 
     .moloch .dataTable td.widget-td a{
         font-size: 12px;
-        color: #000;
     }
 
+    .moloch .dataTable {
+        font-size: 12px;
+    }
 </style>
 
 <div class="moloch" style="overflow: auto; width: 100%; height: 100%; padding-left:10px; padding-right:10px"> <!-- Main Div -->
@@ -76,40 +48,37 @@ of Phantom Cyber Corporation.
 
     {% else %}
 
-    <h3 class="wf-h3-style">Files(s) Info</h3>
-
-    <div class="table">
-        <table class="phantom-table dataTable">
-            <thead>
-                <tr>
+        <div class="files">
+            <h4 class="wf-h4-style">Files</h4>
+            <table class="phantom-table dataTable">
+                <thead>
                     <th class="widget-th">File Number</th>
                     <th class="widget-th">Node</th>
                     <th class="widget-th">Name</th>
                     <th class="widget-th">Locked</th>
                     <th class="widget-th">First Date</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for item in result.data %}
-                    <tr>
-                        <td class="widget-td">{{ item.num }}</td>
-                        <td class="widget-td">{{ item.node }}</td>
-                        <td class="widget-td">
-                            <a href="javascript:;"
-                                onclick="context_menu(this, [{'contains': ['file path'], 'value':
-                                '{{ item.name }}' }], 0, {{ container.id }}, null, false);">
-                                {{ item.name }}
-                                &nbsp;
-                                <span class="fa fa-caret-down" style="font-size: smaller;"></span>
-                            </a>
-                        </td>
-                        <td class="widget-td">{{ item.locked }}</td>
-                        <td class="widget-td">{{ item.first }}</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
+                </thead>
+                <tbody>
+                    {% for item in result.data %}
+                        <tr>
+                            <td class="widget-td">{{ item.num }}</td>
+                            <td class="widget-td">{{ item.node }}</td>
+                            <td class="widget-td">
+                                <a href="javascript:;"
+                                    onclick="context_menu(this, [{'contains': ['file path'], 'value':
+                                    '{{ item.name }}' }], 0, {{ container.id }}, null, false);">
+                                    {{ item.name }}
+                                    &nbsp;
+                                    <span class="fa fa-caret-down" style="font-size: smaller;"></span>
+                                </a>
+                            </td>
+                            <td class="widget-td">{{ item.locked }}</td>
+                            <td class="widget-td">{{ item.first }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     {% endif %}
     {% endfor %}
 </div>
