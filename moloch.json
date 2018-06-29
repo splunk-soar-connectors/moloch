@@ -263,7 +263,7 @@
         {
             "action": "list fields",
             "identifier": "list_fields",
-            "description": "List all fields",
+            "description": "List all fields on which user can query",
             "type": "investigate",
             "read_only": true,
             "parameters": {
@@ -457,7 +457,7 @@
         {
             "action": "list files",
             "identifier": "list_files",
-            "description": "List all files",
+            "description": "List all pcap files",
             "type": "investigate",
             "read_only": true,
             "parameters": {},
