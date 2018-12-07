@@ -9,12 +9,12 @@
     "product_name": "Moloch",
     "product_version_regex": ".*",
     "publisher": "Phantom",
-    "license": "Copyright (c) Phantom Cyber Corporation, 2018",
+    "license": "Copyright (c) 2018 Splunk Inc.",
     "app_version": "1.0.3",
     "utctime_updated": "2018-12-07T01:57:19.000000Z",
     "package_name": "phantom_moloch",
     "main_module": "moloch_connector.pyc",
-    "min_phantom_version": "3.0.284",
+    "min_phantom_version": "4.0.1068",
     "app_wizard_version": "1.0.0",
     "configuration": {
         "server_url": {
@@ -116,7 +116,7 @@
                     "primary": true
                 },
                 "limit": {
-                    "description": "Max number of sessions to return (Default: 50)",
+                    "description": "Maximum number of sessions to return (Default: 50)",
                     "data_type": "numeric",
                     "default": 50,
                     "order": 6
@@ -263,7 +263,7 @@
         {
             "action": "list fields",
             "identifier": "list_fields",
-            "description": "List all fields",
+            "description": "List all fields on which user can query",
             "type": "investigate",
             "read_only": true,
             "parameters": {
@@ -457,7 +457,7 @@
         {
             "action": "list files",
             "identifier": "list_files",
-            "description": "List all files",
+            "description": "List all pcap files",
             "type": "investigate",
             "read_only": true,
             "parameters": {},

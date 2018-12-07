@@ -9,63 +9,48 @@
 
 {% block widget_content %} <!-- Main Start Block -->
 
-<!--
---
-File: moloch_list_fields.html
+<!-- File: moloch_list_fields.html
+  Copyright (c) 2018 Splunk Inc.
 
-Copyright (c) Phantom Cyber Corporation, 2018
-
-This unpublished material is proprietary to Phantom Cyber.
-All rights reserved. The methods and
-techniques described herein are considered trade secrets
-and/or confidential. Reproduction or distribution, in whole
-or in part, is forbidden except by express written permission
-of Phantom Cyber Corporation.
-
---
+  SPLUNK CONFIDENTIAL - Use or disclosure of this material in whole or in part
+  without a valid written license from Splunk Inc. is PROHIBITED.
 -->
 
 <style>
-
     .moloch a:hover {
-    text-decoration:underline;
+        text-decoration:underline;
     }
 
     .moloch .wf-h4-style {
-    font-size : 16px
+        font-size : 20px;
     }
 
-    .moloch .table {
-        width: 100%;
-        overflow-x: auto;
+    .moloch .wf-table-vertical {
+        width: initial;
+        font-size: 12px;
+    }
+
+    .moloch .wf-table-vertical td{
+        padding: 5px;
+        border: 1px solid !important;
+    }
+
+    .moloch .wf-table-vertical tr td:first-child {
+        font-weight: bold;
     }
 
     .moloch .dataTable th.widget-th {
-        border-top: 1px solid #eee !important;
+        border-top: 1px solid !important;
+        border-bottom: 1px solid !important;
     }
 
     .moloch .dataTable td.widget-td a{
         font-size: 12px;
     }
 
-    .moloch .wf-table-vertical {
-    width: initial;
-    font-size: 12px;
+    .moloch .dataTable {
+        font-size: 12px;
     }
-
-    .moloch .wf-table-vertical td{
-    padding: 5px;
-    border: 1px solid !important;
-    }
-
-    .moloch .wf-table-vertical th{
-    border: 1px solid !important;
-    }
-
-    .moloch .wf-table-vertical tr td:first-child {
-    font-weight: bold;
-    }
-
 </style>
 
 <div class="moloch" style="overflow: auto; width: 100%; height: 100%; padding-left:10px; padding-right:10px"> <!-- Main Div -->
@@ -77,12 +62,12 @@ of Phantom Cyber Corporation.
 
     {% else %}
 
-    <h3 class="wf-h3-style">Info</h3>
+        <h3 class="wf-h4-style">Info</h3>
         <table class="wf-table-vertical">
             <tr>
-                <th class="widget-th">
+                <td>
                     Port
-                </th>
+                </td>
                 <td>
                     {% if result.param.port %}
                         <a href="javascript:;"
@@ -105,38 +90,35 @@ of Phantom Cyber Corporation.
             </tr>
         </table>
 
-    <h3 class="wf-h3-style">Fields(s) Info</h3>
-
-    <div class="table">
-        <table class="phantom-table dataTable">
-            <thead>
-                <tr>
+        <div class="fields">
+            <h4 class="wf-h4-style">Fields</h4>
+            <table class="phantom-table dataTable">
+                <thead>
                     <th class="widget-th">ID</th>
                     <th class="widget-th">Friendly Name</th>
                     <th class="widget-th">Help</th>
                     <th class="widget-th">Type</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for item in result.data %}
-                    <tr>
-                        <td>
-                            <a href="javascript:;"
-                            onclick="context_menu(this, [{'contains': ['moloch field'], 'value':
-                            '{{ item.id }}' }], 0, {{ container.id }}, null, false);">
-                            {{ item.id }}
-                            &nbsp;
-                            <span class="fa fa-caret-down" style="font-size: smaller;"></span>
-                            </a>
-                        </td>
-                        <td>{{item.source.friendlyName}}</td>
-                        <td>{{item.source.help}}</td>
-                        <td>{{item.source.type}}</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
+                </thead>
+                <tbody>
+                    {% for item in result.data %}
+                        <tr>
+                            <td class="widget-td">
+                                <a href="javascript:;"
+                                onclick="context_menu(this, [{'contains': ['moloch field'], 'value':
+                                '{{ item.id }}' }], 0, {{ container.id }}, null, false);">
+                                {{ item.id }}
+                                &nbsp;
+                                <span class="fa fa-caret-down" style="font-size: smaller;"></span>
+                                </a>
+                            </td>
+                            <td class="widget-td">{{item.source.friendlyName}}</td>
+                            <td class="widget-td">{{item.source.help}}</td>
+                            <td class="widget-td">{{item.source.type}}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     {% endif %}
     {% endfor %}
 </div>
