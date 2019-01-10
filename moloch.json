@@ -9,7 +9,7 @@
     "product_name": "Moloch",
     "product_version_regex": ".*",
     "publisher": "Phantom",
-    "license": "Copyright (c) 2018 Splunk Inc.",
+    "license": "Copyright (c) 2018-2019 Splunk Inc.",
     "app_version": "1.0.4",
     "utctime_updated": "2018-12-07T19:17:44.000000Z",
     "package_name": "phantom_moloch",
