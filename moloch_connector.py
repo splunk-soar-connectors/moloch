@@ -1,5 +1,5 @@
 # File: moloch_connector.py
-# Copyright (c) 2018-2019 Splunk Inc.
+# Copyright (c) 2019 Splunk Inc.
 #
 # SPLUNK CONFIDENTIAL - Use or disclosure of this material in whole or in part
 # without a valid written license from Splunk Inc. is PROHIBITED.
@@ -231,7 +231,10 @@ class MolochConnector(BaseConnector):
             return RetVal(action_result.set_status(phantom.APP_ERROR, "Invalid method: {0}".format(method)), resp_json)
 
         # Create a URL to connect to
-        url = '{url}{endpoint}'.format(url=self._server_url, endpoint=endpoint)
+        try:
+            url = '{url}{endpoint}'.format(url=self._server_url, endpoint=endpoint)
+        except Exception as e:
+            return RetVal(action_result.set_status(phantom.APP_ERROR, "Invalid URL. Please provide a valid URL"), resp_json)
 
         try:
             # In case of get_pcap action stream the response and store it into temp file
