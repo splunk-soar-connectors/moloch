@@ -10,7 +10,6 @@ import phantom.app as phantom
 import phantom.rules as ph_rules
 from phantom.base_connector import BaseConnector
 from phantom.action_result import ActionResult
-from phantom.vault import Vault
 
 from moloch_consts import *
 import requests
@@ -439,7 +438,15 @@ class MolochConnector(BaseConnector):
         invalid_chars = '[]<>/\():;"\'|*()`~!@#$%^&+={}?,'
 
         # Remove special character defined in invalid_chars form filename
-        filename = filename.translate(None, invalid_chars)
+        try:
+            filename = filename.translate(None, invalid_chars)
+        except:
+            # For Python v3 translate function expects a table for replacing the characters
+            translate_table = {}
+            for invalid_char in invalid_chars:
+                translate_table[ord(invalid_char)] = None
+            filename = filename.translate(translate_table)
+
         _, _, vault_file_list = ph_rules.vault_info(file_name=filename)
         vault_file_list = list(vault_file_list)
 
@@ -463,7 +470,7 @@ class MolochConnector(BaseConnector):
         vault_file_details = {phantom.APP_JSON_SIZE: os.path.getsize(temp_file_path)}
 
         # Adding file to vault
-        success, _, vault_id = ph_rules.vault_add(file_location=temp_file_path, container_id=self.get_container_id(), file_name=filename,
+        success, _, vault_id = ph_rules.vault_add(file_location=temp_file_path, container=self.get_container_id(), file_name=filename,
                                               metadata=vault_file_details)
 
         # Updating report data with vault details
