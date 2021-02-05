@@ -9,12 +9,16 @@
     "product_name": "Moloch",
     "product_version_regex": ".*",
     "publisher": "Splunk",
-    "license": "Copyright (c) 2019 Splunk Inc.",
-    "app_version": "1.0.9",
-    "utctime_updated": "2019-03-15T21:35:06.000000Z",
+    "license": "Copyright (c) 2019-2021 Splunk Inc.",
+    "app_version": "2.0.1",
+    "utctime_updated": "2021-01-21T06:23:31.000000Z",
     "package_name": "phantom_moloch",
-    "main_module": "moloch_connector.pyc",
-    "min_phantom_version": "4.0.1068",
+    "main_module": "moloch_connector.py",
+    "python_version": "3",
+    "min_phantom_version": "4.9.39220",
+    "latest_tested_versions": [
+        "On-Prem API, January 18, 2021"
+    ],
     "app_wizard_version": "1.0.0",
     "configuration": {
         "server_url": {
@@ -63,7 +67,7 @@
             "action": "get pcap",
             "identifier": "get_pcap",
             "description": "Download the pcap file from server and add it to the vault",
-            "verbose": "Parameter <b>limit</b> has a range of 0 to 2000000.<br>Parameter <b>custom_query</b> is case sensitive. Example for custom query of get_pcap action<br>port.src == 80 || port.dst == 80 && country != USA",
+            "verbose": "Parameter <b>limit</b> has a range of 0 to 2000000.<br>Parameter <b>custom_query</b> is case sensitive. Example for custom query of get_pcap action<br>port.src == 80 || port.dst == 80 && country != USA.",
             "type": "investigate",
             "read_only": true,
             "parameters": {

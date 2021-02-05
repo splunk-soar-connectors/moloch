@@ -1,5 +1,5 @@
 # File: moloch_connector.py
-# Copyright (c) 2019 Splunk Inc.
+# Copyright (c) 2019-2021 Splunk Inc.
 #
 # SPLUNK CONFIDENTIAL - Use or disclosure of this material in whole or in part
 # without a valid written license from Splunk Inc. is PROHIBITED.
@@ -7,9 +7,9 @@
 
 # Phantom App imports
 import phantom.app as phantom
+import phantom.rules as ph_rules
 from phantom.base_connector import BaseConnector
 from phantom.action_result import ActionResult
-from phantom.vault import Vault
 
 from moloch_consts import *
 import requests
@@ -18,7 +18,7 @@ import os
 import ipaddress
 import magic
 from requests.auth import HTTPDigestAuth
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, UnicodeDammit
 
 
 class RetVal(tuple):
@@ -76,7 +76,7 @@ class MolochConnector(BaseConnector):
 
         # Throws exception if IP is not valid IPv4 or IPv6
         try:
-            ipaddress.ip_address(unicode(ip_address))
+            ipaddress.ip_address(UnicodeDammit(ip_address).unicode_markup)
         except Exception as e:
             self.debug_print(MOLOCH_INVALID_IP, e)
             return False
@@ -110,6 +110,9 @@ class MolochConnector(BaseConnector):
 
         try:
             soup = BeautifulSoup(response.text, "html.parser")
+            # Remove the script, style, footer and navigation part from the HTML message
+            for element in soup(["script", "style", "footer", "nav"]):
+                element.extract()
             error_text = soup.text
             split_lines = error_text.split('\n')
             split_lines = [x.strip() for x in split_lines if x.strip()]
@@ -274,7 +277,7 @@ class MolochConnector(BaseConnector):
         self.save_progress(MOLOCH_TEST_CONNECTION)
 
         # Validate port
-        if not str(self._port).isdigit() or int(self._port) not in range(0, 65536):
+        if not str(self._port).isdigit() or int(self._port) not in list(range(0, 65536)):
             self.save_progress(MOLOCH_TEST_CONNECTIVITY_FAILED)
             return action_result.set_status(phantom.APP_ERROR, status_message='{}. {}'.format(
                 MOLOCH_CONNECTING_ERROR_MSG, MOLOCH_INVALID_CONFIG_PORT))
@@ -305,7 +308,7 @@ class MolochConnector(BaseConnector):
         summary = action_result.update_summary({})
 
         # Validate port
-        if not str(self._port).isdigit() or int(self._port) not in range(0, 65536):
+        if not str(self._port).isdigit() or int(self._port) not in list(range(0, 65536)):
             self.debug_print(MOLOCH_INVALID_CONFIG_PORT)
             return action_result.set_status(phantom.APP_ERROR, status_message=MOLOCH_INVALID_CONFIG_PORT)
 
@@ -345,7 +348,7 @@ class MolochConnector(BaseConnector):
             return action_result.set_status(phantom.APP_ERROR, status_message=MOLOCH_INVALID_LIMIT_MSG)
 
         # Validate parameter limit
-        if limit not in range(0, 2000001):
+        if limit not in list(range(0, 2000001)):
             self.debug_print(MOLOCH_INVALID_LIMIT_MSG)
             return action_result.set_status(phantom.APP_ERROR, status_message=MOLOCH_INVALID_LIMIT_MSG)
 
@@ -435,8 +438,17 @@ class MolochConnector(BaseConnector):
         invalid_chars = '[]<>/\():;"\'|*()`~!@#$%^&+={}?,'
 
         # Remove special character defined in invalid_chars form filename
-        filename = filename.translate(None, invalid_chars)
-        vault_file_list = Vault.get_file_info(file_name=filename)
+        try:
+            filename = filename.translate(None, invalid_chars)
+        except:
+            # For Python v3 translate function expects a table for replacing the characters
+            translate_table = {}
+            for invalid_char in invalid_chars:
+                translate_table[ord(invalid_char)] = None
+            filename = filename.translate(translate_table)
+
+        _, _, vault_file_list = ph_rules.vault_info(file_name=filename)
+        vault_file_list = list(vault_file_list)
 
         # Iterate through files of Vault
         for file in vault_file_list:
@@ -458,15 +470,15 @@ class MolochConnector(BaseConnector):
         vault_file_details = {phantom.APP_JSON_SIZE: os.path.getsize(temp_file_path)}
 
         # Adding file to vault
-        vault_ret_dict = Vault.add_attachment(temp_file_path, container_id=self.get_container_id(), file_name=filename,
+        success, _, vault_id = ph_rules.vault_add(file_location=temp_file_path, container=self.get_container_id(), file_name=filename,
                                               metadata=vault_file_details)
 
         # Updating report data with vault details
-        if not vault_ret_dict['succeeded']:
+        if not success:
             self.debug_print('Error while adding the file to vault')
             return action_result.set_status(phantom.APP_ERROR, status_message='Error while adding the file to vault')
 
-        vault_file_details[phantom.APP_JSON_VAULT_ID] = vault_ret_dict[phantom.APP_JSON_HASH]
+        vault_file_details[phantom.APP_JSON_VAULT_ID] = vault_id
         vault_file_details['file_name'] = filename
         action_result.add_data(vault_file_details)
 
@@ -485,7 +497,7 @@ class MolochConnector(BaseConnector):
         port = param.get(MOLOCH_PARAM_PORT, 9200)
 
         # Validate port
-        if not str(port).isdigit() or int(port) not in range(0, 65536):
+        if not str(port).isdigit() or int(port) not in list(range(0, 65536)):
             self.debug_print(MOLOCH_INVALID_PARAM_PORT)
             return action_result.set_status(phantom.APP_ERROR, status_message=MOLOCH_INVALID_PARAM_PORT)
 
@@ -521,7 +533,7 @@ class MolochConnector(BaseConnector):
         action_result = self.add_action_result(ActionResult(dict(param)))
 
         # Validate port
-        if not str(self._port).isdigit() or int(self._port) not in range(0, 65536):
+        if not str(self._port).isdigit() or int(self._port) not in list(range(0, 65536)):
             self.debug_print(MOLOCH_INVALID_CONFIG_PORT)
             return action_result.set_status(phantom.APP_ERROR, status_message=MOLOCH_INVALID_CONFIG_PORT)
 
@@ -563,7 +575,7 @@ class MolochConnector(BaseConnector):
         action = self.get_action_identifier()
         action_execution_status = phantom.APP_SUCCESS
 
-        if action in action_mapping.keys():
+        if action in list(action_mapping.keys()):
             action_function = action_mapping[action]
             action_execution_status = action_function(param)
 
@@ -611,7 +623,7 @@ if __name__ == '__main__':
     if username and password:
         login_url = BaseConnector._get_phantom_base_url() + "login"
         try:
-            print ("Accessing the Login page")
+            print("Accessing the Login page")
             r = requests.get(login_url, verify=False)
             csrftoken = r.cookies['csrftoken']
 
@@ -624,15 +636,15 @@ if __name__ == '__main__':
             headers['Cookie'] = 'csrftoken={}'.format(csrftoken)
             headers['Referer'] = login_url
 
-            print ("Logging into Platform to get the session id")
+            print("Logging into Platform to get the session id")
             r2 = requests.post(login_url, verify=False, data=data, headers=headers)
             session_id = r2.cookies['sessionid']
         except Exception as e:
-            print ("Unable to get session id from the platform. Error: {}".format(str(e)))
+            print("Unable to get session id from the platform. Error: {}".format(str(e)))
             exit(1)
 
     if len(sys.argv) < 2:
-        print "No test json specified as input"
+        print("No test json specified as input")
         exit(0)
 
     with open(sys.argv[1]) as f:
@@ -647,6 +659,6 @@ if __name__ == '__main__':
             in_json['user_session_token'] = session_id
 
         ret_val = connector._handle_action(json.dumps(in_json), None)
-        print (json.dumps(json.loads(ret_val), indent=4))
+        print(json.dumps(json.loads(ret_val), indent=4))
 
     exit(0)
