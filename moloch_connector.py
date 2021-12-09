@@ -367,31 +367,29 @@ class MolochConnector(BaseConnector):
         params['stopTime'] = end_time
 
         expression = ''
+        expressions = []
 
         # Add source_ip to expression, if available
         if source_ip:
             expression = 'ip.src == {source_ip}'.format(source_ip=source_ip)
+            expressions.append(expression)
 
         # Add dest_ip to expression, if available
         if dest_ip:
-            if expression:
-                expression = '{expr} && ip.dst == {dst_ip}'.format(expr=expression, dst_ip=dest_ip)
-            else:
-                expression = 'ip.dst == {dst_ip}'.format(dst_ip=dest_ip)
+            expression = 'ip.dst == {dst_ip}'.format(dst_ip=dest_ip)
+            expressions.append(expression)
 
         # Add hostname to expression, if available
         if hostname:
-            if expression:
-                expression = '{expr} && host.http == {hostname}'.format(expr=expression, hostname=hostname)
-            else:
-                expression = 'host.http == {hostname}'.format(hostname=hostname)
+            expression = 'host.http == {hostname}'.format(hostname=hostname)
+            expressions.append(expression)
 
         # Add custom_query to expression, if available
         if custom_query:
-            if expression:
-                expression = '{expr} && {query}'.format(expr=expression, query=custom_query)
-            else:
-                expression = custom_query
+            expression = custom_query
+            expressions.append(expression)
+
+        expression = " && ".join(expressions)
 
         if expression:
             params['expression'] = expression
@@ -406,15 +404,11 @@ class MolochConnector(BaseConnector):
 
         # Create filename using input parameters
         filename = 'moloch_{start_time}_{end_time}'.format(start_time=start_time, end_time=end_time)
+        inputs = [('src_ip', source_ip), ('dst_ip', dest_ip), ('hostname', hostname)]
 
-        if source_ip:
-            filename = '{filename}_src_ip_{source_ip}'.format(filename=filename, source_ip=source_ip)
-
-        if dest_ip:
-            filename = '{filename}_dst_ip_{dst_ip}'.format(filename=filename, dst_ip=dest_ip)
-
-        if hostname:
-            filename = '{filename}_hostname_{hostname}'.format(filename=filename, hostname=hostname)
+        for input_key, input_val in inputs:
+            if input_val:
+                filename = '{filename}_{input_key}_{input_val}'.format(filename=filename, input_key=input_key, input_val=input_val)
 
         filename = '{filename}_limit_{limit}'.format(filename=filename, limit=limit)
 
