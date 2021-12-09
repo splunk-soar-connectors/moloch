@@ -15,6 +15,7 @@
     "package_name": "phantom_moloch",
     "main_module": "moloch_connector.py",
     "python_version": "3",
+    "fips_compliant":true,
     "min_phantom_version": "4.9.39220",
     "latest_tested_versions": [
         "On-Prem API, January 18, 2021"
