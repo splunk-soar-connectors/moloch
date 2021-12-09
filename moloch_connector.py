@@ -14,20 +14,20 @@
 # and limitations under the License.
 #
 #
-# Phantom App imports
-import phantom.app as phantom
-import phantom.rules as ph_rules
-from phantom.base_connector import BaseConnector
-from phantom.action_result import ActionResult
-
-from moloch_consts import *
-import requests
+import ipaddress
 import json
 import os
-import ipaddress
+
 import magic
-from requests.auth import HTTPDigestAuth
+import phantom.app as phantom
+import phantom.rules as ph_rules
+import requests
 from bs4 import BeautifulSoup, UnicodeDammit
+from phantom.action_result import ActionResult
+from phantom.base_connector import BaseConnector
+from requests.auth import HTTPDigestAuth
+
+from moloch_consts import *
 
 
 class RetVal(tuple):
@@ -187,8 +187,8 @@ class MolochConnector(BaseConnector):
         """
 
         # store the r_text in debug data, it will get dumped in the logs if the action fails
-        if hasattr(action_result, 'add_debug_data') and (self.get_action_identifier() != "get_pcap" or
-                                                         not (200 <= response.status_code < 399)):
+        if hasattr(action_result, 'add_debug_data') and (self.get_action_identifier() != "get_pcap" or not
+                                                        (200 <= response.status_code < 399)):
             action_result.add_debug_data({'r_status_code': response.status_code})
             action_result.add_debug_data({'r_text': response.text})
             action_result.add_debug_data({'r_headers': response.headers})
@@ -245,7 +245,7 @@ class MolochConnector(BaseConnector):
         # Create a URL to connect to
         try:
             url = '{url}{endpoint}'.format(url=self._server_url, endpoint=endpoint)
-        except Exception as e:
+        except:
             return RetVal(action_result.set_status(phantom.APP_ERROR, "Invalid URL. Please provide a valid URL"), resp_json)
 
         try:
@@ -444,7 +444,7 @@ class MolochConnector(BaseConnector):
             self.debug_print(message)
             return action_result.set_status(phantom.APP_ERROR, status_message=message)
 
-        invalid_chars = '[]<>/\():;"\'|*()`~!@#$%^&+={}?,'
+        invalid_chars = r'[]<>/\():;"\'|*()`~!@#$%^&+={}?,'
 
         # Remove special character defined in invalid_chars form filename
         try:
@@ -605,9 +605,10 @@ class MolochConnector(BaseConnector):
 
 if __name__ == '__main__':
 
-    import sys
-    import pudb
     import argparse
+    import sys
+
+    import pudb
 
     pudb.set_trace()
 
