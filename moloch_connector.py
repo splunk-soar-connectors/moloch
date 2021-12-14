@@ -245,7 +245,7 @@ class MolochConnector(BaseConnector):
         # Create a URL to connect to
         try:
             url = '{url}{endpoint}'.format(url=self._server_url, endpoint=endpoint)
-        except:
+        except Exception:
             return RetVal(action_result.set_status(phantom.APP_ERROR, "Invalid URL. Please provide a valid URL"), resp_json)
 
         try:
