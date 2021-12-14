@@ -14,20 +14,20 @@
 # and limitations under the License.
 #
 #
-# Phantom App imports
-import phantom.app as phantom
-import phantom.rules as ph_rules
-from phantom.base_connector import BaseConnector
-from phantom.action_result import ActionResult
-
-from moloch_consts import *
-import requests
+import ipaddress
 import json
 import os
-import ipaddress
+
 import magic
-from requests.auth import HTTPDigestAuth
+import phantom.app as phantom
+import phantom.rules as ph_rules
+import requests
 from bs4 import BeautifulSoup, UnicodeDammit
+from phantom.action_result import ActionResult
+from phantom.base_connector import BaseConnector
+from requests.auth import HTTPDigestAuth
+
+from moloch_consts import *
 
 
 class RetVal(tuple):
@@ -187,8 +187,8 @@ class MolochConnector(BaseConnector):
         """
 
         # store the r_text in debug data, it will get dumped in the logs if the action fails
-        if hasattr(action_result, 'add_debug_data') and (self.get_action_identifier() != "get_pcap" or
-                                                         not (200 <= response.status_code < 399)):
+        if hasattr(action_result, 'add_debug_data') and (self.get_action_identifier() != "get_pcap" or not
+                                                        (200 <= response.status_code < 399)):
             action_result.add_debug_data({'r_status_code': response.status_code})
             action_result.add_debug_data({'r_text': response.text})
             action_result.add_debug_data({'r_headers': response.headers})
@@ -245,7 +245,7 @@ class MolochConnector(BaseConnector):
         # Create a URL to connect to
         try:
             url = '{url}{endpoint}'.format(url=self._server_url, endpoint=endpoint)
-        except Exception as e:
+        except Exception:
             return RetVal(action_result.set_status(phantom.APP_ERROR, "Invalid URL. Please provide a valid URL"), resp_json)
 
         try:
@@ -367,31 +367,29 @@ class MolochConnector(BaseConnector):
         params['stopTime'] = end_time
 
         expression = ''
+        expressions = []
 
         # Add source_ip to expression, if available
         if source_ip:
             expression = 'ip.src == {source_ip}'.format(source_ip=source_ip)
+            expressions.append(expression)
 
         # Add dest_ip to expression, if available
         if dest_ip:
-            if expression:
-                expression = '{expr} && ip.dst == {dst_ip}'.format(expr=expression, dst_ip=dest_ip)
-            else:
-                expression = 'ip.dst == {dst_ip}'.format(dst_ip=dest_ip)
+            expression = 'ip.dst == {dst_ip}'.format(dst_ip=dest_ip)
+            expressions.append(expression)
 
         # Add hostname to expression, if available
         if hostname:
-            if expression:
-                expression = '{expr} && host.http == {hostname}'.format(expr=expression, hostname=hostname)
-            else:
-                expression = 'host.http == {hostname}'.format(hostname=hostname)
+            expression = 'host.http == {hostname}'.format(hostname=hostname)
+            expressions.append(expression)
 
         # Add custom_query to expression, if available
         if custom_query:
-            if expression:
-                expression = '{expr} && {query}'.format(expr=expression, query=custom_query)
-            else:
-                expression = custom_query
+            expression = custom_query
+            expressions.append(expression)
+
+        expression = " && ".join(expressions)
 
         if expression:
             params['expression'] = expression
@@ -406,15 +404,11 @@ class MolochConnector(BaseConnector):
 
         # Create filename using input parameters
         filename = 'moloch_{start_time}_{end_time}'.format(start_time=start_time, end_time=end_time)
+        inputs = [('src_ip', source_ip), ('dst_ip', dest_ip), ('hostname', hostname)]
 
-        if source_ip:
-            filename = '{filename}_src_ip_{source_ip}'.format(filename=filename, source_ip=source_ip)
-
-        if dest_ip:
-            filename = '{filename}_dst_ip_{dst_ip}'.format(filename=filename, dst_ip=dest_ip)
-
-        if hostname:
-            filename = '{filename}_hostname_{hostname}'.format(filename=filename, hostname=hostname)
+        for input_key, input_val in inputs:
+            if input_val:
+                filename = '{filename}_{input_key}_{input_val}'.format(filename=filename, input_key=input_key, input_val=input_val)
 
         filename = '{filename}_limit_{limit}'.format(filename=filename, limit=limit)
 
@@ -444,7 +438,7 @@ class MolochConnector(BaseConnector):
             self.debug_print(message)
             return action_result.set_status(phantom.APP_ERROR, status_message=message)
 
-        invalid_chars = '[]<>/\():;"\'|*()`~!@#$%^&+={}?,'
+        invalid_chars = r'[]<>/\():;"\'|*()`~!@#$%^&+={}?,'
 
         # Remove special character defined in invalid_chars form filename
         try:
@@ -605,9 +599,10 @@ class MolochConnector(BaseConnector):
 
 if __name__ == '__main__':
 
-    import sys
-    import pudb
     import argparse
+    import sys
+
+    import pudb
 
     pudb.set_trace()
 
