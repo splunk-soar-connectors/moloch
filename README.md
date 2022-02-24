@@ -1,12 +1,12 @@
 [comment]: # "Auto-generated SOAR connector documentation"
 # Moloch
 
-Publisher: Splunk  
-Connector Version: 2\.0\.2  
+Publisher: Splunk Community  
+Connector Version: 2\.0\.3  
 Product Vendor: Moloch  
 Product Name: Moloch  
 Product Version Supported (regex): "\.\*"  
-Minimum Product Version: 4\.9\.39220  
+Minimum Product Version: 5\.1\.0  
 
 This app integrates with Moloch to support various investigative actions
 
