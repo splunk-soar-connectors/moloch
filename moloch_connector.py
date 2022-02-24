@@ -496,6 +496,7 @@ class MolochConnector(BaseConnector):
         :return: status success/failure
         """
 
+        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
         action_result = self.add_action_result(ActionResult(dict(param)))
         port = param.get(MOLOCH_PARAM_PORT, 9200)
 
@@ -512,6 +513,7 @@ class MolochConnector(BaseConnector):
         # Something went wrong
         if phantom.is_fail(ret_val):
             message = action_result.get_message()
+            self.debug_print(message)
             if "Status Code: 200" in message and "angular.module" in message:
                 action_result.set_status(phantom.APP_ERROR, "Unable to connect to server. "
                                                             "Please make sure that entered port is correct")
@@ -532,7 +534,7 @@ class MolochConnector(BaseConnector):
         :param param: (not used in this method)
         :return: status success/failure
         """
-
+        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
         action_result = self.add_action_result(ActionResult(dict(param)))
 
         # Validate port
@@ -547,6 +549,8 @@ class MolochConnector(BaseConnector):
 
         # Something went wrong
         if phantom.is_fail(ret_val):
+            message = action_result.get_message()
+            self.debug_print(message)
             return action_result.get_status()
 
         # Add data to action_result
