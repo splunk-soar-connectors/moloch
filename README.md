@@ -2,7 +2,7 @@
 # Moloch
 
 Publisher: Splunk Community  
-Connector Version: 2\.0\.3  
+Connector Version: 3\.0\.0  
 Product Vendor: Moloch  
 Product Name: Moloch  
 Product Version Supported (regex): "\.\*"  
