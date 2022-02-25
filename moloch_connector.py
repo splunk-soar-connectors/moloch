@@ -1,24 +1,33 @@
 # File: moloch_connector.py
-# Copyright (c) 2019-2021 Splunk Inc.
 #
-# SPLUNK CONFIDENTIAL - Use or disclosure of this material in whole or in part
-# without a valid written license from Splunk Inc. is PROHIBITED.
-
-
-# Phantom App imports
-import phantom.app as phantom
-import phantom.rules as ph_rules
-from phantom.base_connector import BaseConnector
-from phantom.action_result import ActionResult
-
-from moloch_consts import *
-import requests
+# Copyright (c) 2019-2022 Splunk Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software distributed under
+# the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+# either express or implied. See the License for the specific language governing permissions
+# and limitations under the License.
+#
+#
+import ipaddress
 import json
 import os
-import ipaddress
+
 import magic
-from requests.auth import HTTPDigestAuth
+import phantom.app as phantom
+import phantom.rules as ph_rules
+import requests
 from bs4 import BeautifulSoup, UnicodeDammit
+from phantom.action_result import ActionResult
+from phantom.base_connector import BaseConnector
+from requests.auth import HTTPDigestAuth
+
+from moloch_consts import *
 
 
 class RetVal(tuple):
@@ -178,8 +187,8 @@ class MolochConnector(BaseConnector):
         """
 
         # store the r_text in debug data, it will get dumped in the logs if the action fails
-        if hasattr(action_result, 'add_debug_data') and (self.get_action_identifier() != "get_pcap" or
-                                                         not (200 <= response.status_code < 399)):
+        if hasattr(action_result, 'add_debug_data') and (self.get_action_identifier() != "get_pcap" or not
+                                                        (200 <= response.status_code < 399)):
             action_result.add_debug_data({'r_status_code': response.status_code})
             action_result.add_debug_data({'r_text': response.text})
             action_result.add_debug_data({'r_headers': response.headers})
@@ -236,7 +245,7 @@ class MolochConnector(BaseConnector):
         # Create a URL to connect to
         try:
             url = '{url}{endpoint}'.format(url=self._server_url, endpoint=endpoint)
-        except Exception as e:
+        except Exception:
             return RetVal(action_result.set_status(phantom.APP_ERROR, "Invalid URL. Please provide a valid URL"), resp_json)
 
         try:
@@ -358,31 +367,29 @@ class MolochConnector(BaseConnector):
         params['stopTime'] = end_time
 
         expression = ''
+        expressions = []
 
         # Add source_ip to expression, if available
         if source_ip:
             expression = 'ip.src == {source_ip}'.format(source_ip=source_ip)
+            expressions.append(expression)
 
         # Add dest_ip to expression, if available
         if dest_ip:
-            if expression:
-                expression = '{expr} && ip.dst == {dst_ip}'.format(expr=expression, dst_ip=dest_ip)
-            else:
-                expression = 'ip.dst == {dst_ip}'.format(dst_ip=dest_ip)
+            expression = 'ip.dst == {dst_ip}'.format(dst_ip=dest_ip)
+            expressions.append(expression)
 
         # Add hostname to expression, if available
         if hostname:
-            if expression:
-                expression = '{expr} && host.http == {hostname}'.format(expr=expression, hostname=hostname)
-            else:
-                expression = 'host.http == {hostname}'.format(hostname=hostname)
+            expression = 'host.http == {hostname}'.format(hostname=hostname)
+            expressions.append(expression)
 
         # Add custom_query to expression, if available
         if custom_query:
-            if expression:
-                expression = '{expr} && {query}'.format(expr=expression, query=custom_query)
-            else:
-                expression = custom_query
+            expression = custom_query
+            expressions.append(expression)
+
+        expression = " && ".join(expressions)
 
         if expression:
             params['expression'] = expression
@@ -397,15 +404,11 @@ class MolochConnector(BaseConnector):
 
         # Create filename using input parameters
         filename = 'moloch_{start_time}_{end_time}'.format(start_time=start_time, end_time=end_time)
+        inputs = [('src_ip', source_ip), ('dst_ip', dest_ip), ('hostname', hostname)]
 
-        if source_ip:
-            filename = '{filename}_src_ip_{source_ip}'.format(filename=filename, source_ip=source_ip)
-
-        if dest_ip:
-            filename = '{filename}_dst_ip_{dst_ip}'.format(filename=filename, dst_ip=dest_ip)
-
-        if hostname:
-            filename = '{filename}_hostname_{hostname}'.format(filename=filename, hostname=hostname)
+        for input_key, input_val in inputs:
+            if input_val:
+                filename = '{filename}_{input_key}_{input_val}'.format(filename=filename, input_key=input_key, input_val=input_val)
 
         filename = '{filename}_limit_{limit}'.format(filename=filename, limit=limit)
 
@@ -435,7 +438,7 @@ class MolochConnector(BaseConnector):
             self.debug_print(message)
             return action_result.set_status(phantom.APP_ERROR, status_message=message)
 
-        invalid_chars = '[]<>/\():;"\'|*()`~!@#$%^&+={}?,'
+        invalid_chars = r'[]<>/\():;"\'|*()`~!@#$%^&+={}?,'
 
         # Remove special character defined in invalid_chars form filename
         try:
@@ -493,6 +496,7 @@ class MolochConnector(BaseConnector):
         :return: status success/failure
         """
 
+        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
         action_result = self.add_action_result(ActionResult(dict(param)))
         port = param.get(MOLOCH_PARAM_PORT, 9200)
 
@@ -509,6 +513,7 @@ class MolochConnector(BaseConnector):
         # Something went wrong
         if phantom.is_fail(ret_val):
             message = action_result.get_message()
+            self.debug_print(message)
             if "Status Code: 200" in message and "angular.module" in message:
                 action_result.set_status(phantom.APP_ERROR, "Unable to connect to server. "
                                                             "Please make sure that entered port is correct")
@@ -529,7 +534,7 @@ class MolochConnector(BaseConnector):
         :param param: (not used in this method)
         :return: status success/failure
         """
-
+        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
         action_result = self.add_action_result(ActionResult(dict(param)))
 
         # Validate port
@@ -544,6 +549,8 @@ class MolochConnector(BaseConnector):
 
         # Something went wrong
         if phantom.is_fail(ret_val):
+            message = action_result.get_message()
+            self.debug_print(message)
             return action_result.get_status()
 
         # Add data to action_result
@@ -596,9 +603,10 @@ class MolochConnector(BaseConnector):
 
 if __name__ == '__main__':
 
-    import sys
-    import pudb
     import argparse
+    import sys
+
+    import pudb
 
     pudb.set_trace()
 
@@ -607,12 +615,14 @@ if __name__ == '__main__':
     argparser.add_argument('input_test_json', help='Input Test JSON file')
     argparser.add_argument('-u', '--username', help='username', required=False)
     argparser.add_argument('-p', '--password', help='password', required=False)
+    argparser.add_argument('-v', '--verify', action='store_true', help='verify', required=False, default=False)
 
     args = argparser.parse_args()
     session_id = None
 
     username = args.username
     password = args.password
+    verify = args.verify
 
     if username is not None and password is None:
 
@@ -624,7 +634,7 @@ if __name__ == '__main__':
         login_url = BaseConnector._get_phantom_base_url() + "login"
         try:
             print("Accessing the Login page")
-            r = requests.get(login_url, verify=False)
+            r = requests.get(login_url, verify=verify, timeout=MOLOCH_DEFAULT_TIMEOUT)
             csrftoken = r.cookies['csrftoken']
 
             data = dict()
@@ -637,15 +647,15 @@ if __name__ == '__main__':
             headers['Referer'] = login_url
 
             print("Logging into Platform to get the session id")
-            r2 = requests.post(login_url, verify=False, data=data, headers=headers)
+            r2 = requests.post(login_url, verify=verify, data=data, headers=headers, timeout=MOLOCH_DEFAULT_TIMEOUT)
             session_id = r2.cookies['sessionid']
         except Exception as e:
             print("Unable to get session id from the platform. Error: {}".format(str(e)))
-            exit(1)
+            sys.exit(1)
 
     if len(sys.argv) < 2:
         print("No test json specified as input")
-        exit(0)
+        sys.exit(0)
 
     with open(sys.argv[1]) as f:
         in_json = f.read()
@@ -661,4 +671,4 @@ if __name__ == '__main__':
         ret_val = connector._handle_action(json.dumps(in_json), None)
         print(json.dumps(json.loads(ret_val), indent=4))
 
-    exit(0)
+    sys.exit(0)

@@ -8,14 +8,15 @@
     "logo_dark": "logo_moloch_dark.svg",
     "product_name": "Moloch",
     "product_version_regex": ".*",
-    "publisher": "Splunk",
-    "license": "Copyright (c) 2019-2021 Splunk Inc.",
-    "app_version": "2.0.2",
-    "utctime_updated": "2021-02-05T06:42:33.000000Z",
+    "publisher": "Splunk Community",
+    "license": "Copyright (c) 2019-2022 Splunk Inc.",
+    "app_version": "3.0.0",
+    "utctime_updated": "2022-02-24T01:21:16.000000Z",
     "package_name": "phantom_moloch",
     "main_module": "moloch_connector.py",
     "python_version": "3",
-    "min_phantom_version": "4.9.39220",
+    "fips_compliant": true,
+    "min_phantom_version": "5.1.0",
     "latest_tested_versions": [
         "On-Prem API, January 18, 2021"
     ],
@@ -557,5 +558,41 @@
             },
             "versions": "EQ(*)"
         }
-    ]
+    ],
+    "pip_dependencies": {
+        "wheel": [
+            {
+                "module": "beautifulsoup4",
+                "input_file": "wheels/py3/beautifulsoup4-4.9.1-py3-none-any.whl"
+            },
+            {
+                "module": "certifi",
+                "input_file": "wheels/shared/certifi-2021.10.8-py2.py3-none-any.whl"
+            },
+            {
+                "module": "chardet",
+                "input_file": "wheels/shared/chardet-3.0.4-py2.py3-none-any.whl"
+            },
+            {
+                "module": "idna",
+                "input_file": "wheels/shared/idna-2.10-py2.py3-none-any.whl"
+            },
+            {
+                "module": "python_magic",
+                "input_file": "wheels/shared/python_magic-0.4.18-py2.py3-none-any.whl"
+            },
+            {
+                "module": "requests",
+                "input_file": "wheels/shared/requests-2.25.0-py2.py3-none-any.whl"
+            },
+            {
+                "module": "soupsieve",
+                "input_file": "wheels/py3/soupsieve-2.3.1-py3-none-any.whl"
+            },
+            {
+                "module": "urllib3",
+                "input_file": "wheels/shared/urllib3-1.26.8-py2.py3-none-any.whl"
+            }
+        ]
+    }
 }
