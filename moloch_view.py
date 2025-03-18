@@ -1,6 +1,6 @@
 # File: moloch_view.py
 #
-# Copyright (c) 2019-2022 Splunk Inc.
+# Copyright (c) 2019-2025 Splunk Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@ from datetime import datetime
 
 
 def get_ctx_result(provides, result):
-    """ Function that parses data.
+    """Function that parses data.
 
     :param result: result
     :param provides: action name
@@ -29,31 +29,31 @@ def get_ctx_result(provides, result):
     summary = result.get_summary()
     data = result.get_data()
 
-    if provides == 'get pcap':
+    if provides == "get pcap":
         # If error occurs while converting epoch to iso time format
         try:
-            param['start_time'] = '{}Z'.format(datetime.utcfromtimestamp(int(param['start_time'])).isoformat())
-            param['end_time'] = '{}Z'.format(datetime.utcfromtimestamp(int(param['end_time'])).isoformat())
+            param["start_time"] = "{}Z".format(datetime.utcfromtimestamp(int(param["start_time"])).isoformat())
+            param["end_time"] = "{}Z".format(datetime.utcfromtimestamp(int(param["end_time"])).isoformat())
         except:
-            ctx_result['data'] = {}
+            ctx_result["data"] = {}
             return ctx_result
 
-    ctx_result['param'] = param
+    ctx_result["param"] = param
 
     if summary:
-        ctx_result['summary'] = summary
-    ctx_result['action'] = provides
+        ctx_result["summary"] = summary
+    ctx_result["action"] = provides
     if not data:
-        ctx_result['data'] = {}
+        ctx_result["data"] = {}
         return ctx_result
 
-    ctx_result['data'] = _parse_data(data, provides)
+    ctx_result["data"] = _parse_data(data, provides)
 
     return ctx_result
 
 
 def _parse_data(data, provides):
-    """ Function that parse data.
+    """Function that parse data.
 
     :param provides: action name
     :param data: response data
@@ -62,26 +62,26 @@ def _parse_data(data, provides):
 
     if provides == "list files":
         for item in data:
-            if item.get('first'):
-                item['first'] = "{}Z".format(datetime.utcfromtimestamp(item['first']).isoformat())
+            if item.get("first"):
+                item["first"] = "{}Z".format(datetime.utcfromtimestamp(item["first"]).isoformat())
 
-            if item.get('locked') == 0:
-                item['locked'] = False
+            if item.get("locked") == 0:
+                item["locked"] = False
             else:
-                item['locked'] = True
+                item["locked"] = True
 
     if provides == "list fields":
         for index, item in enumerate(data):
-            if item.get('_id'):
-                data[index]['id'] = item['_id']
-            if item.get('_source'):
-                data[index]['source'] = item['_source']
+            if item.get("_id"):
+                data[index]["id"] = item["_id"]
+            if item.get("_source"):
+                data[index]["source"] = item["_source"]
 
     return data
 
 
 def display_view(provides, all_app_runs, context):
-    """ Function that displays view.
+    """Function that displays view.
 
     :param provides: action name
     :param context: context
@@ -89,10 +89,9 @@ def display_view(provides, all_app_runs, context):
     :return: html page
     """
 
-    context['results'] = results = []
+    context["results"] = results = []
     for summary, action_results in all_app_runs:
         for result in action_results:
-
             ctx_result = get_ctx_result(provides, result)
             if not ctx_result:
                 continue
