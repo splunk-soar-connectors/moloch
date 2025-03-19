@@ -12,14 +12,14 @@
 # the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
 # either express or implied. See the License for the specific language governing permissions
 # and limitations under the License.
-MOLOCH_CONFIG_SERVER_URL = 'server_url'
-MOLOCH_CONFIG_PORT = 'port'
-MOLOCH_CONFIG_USERNAME = 'username'
-MOLOCH_CONFIG_PASSWORD = 'password'  # pragma: allowlist secret
-MOLOCH_VERIFY_SERVER_CERT = 'verify_server_cert'
-MOLOCH_TEST_CONNECTION = 'Querying endpoint to verify the credentials provided'
-MOLOCH_TEST_CONNECTIVITY_FAILED = 'Test Connectivity Failed'
-MOLOCH_TEST_CONNECTIVITY_PASSED = 'Test Connectivity Passed'
+MOLOCH_CONFIG_SERVER_URL = "server_url"
+MOLOCH_CONFIG_PORT = "port"
+MOLOCH_CONFIG_USERNAME = "username"
+MOLOCH_CONFIG_PASSWORD = "password"  # pragma: allowlist secret
+MOLOCH_VERIFY_SERVER_CERT = "verify_server_cert"
+MOLOCH_TEST_CONNECTION = "Querying endpoint to verify the credentials provided"
+MOLOCH_TEST_CONNECTIVITY_FAILED = "Test Connectivity Failed"
+MOLOCH_TEST_CONNECTIVITY_PASSED = "Test Connectivity Passed"
 MOLOCH_INVALID_TIME_RANGE = "Invalid time range. 'end_time' should be greater than 'start_time'."
 MOLOCH_FILE_ALREADY_AVAILABLE = "File already available in Vault"
 MOLOCH_INVALID_IP = "Parameter 'ip' failed validation"
