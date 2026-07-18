@@ -11,7 +11,7 @@
 {% block widget_content %}
   <!-- Main Start Block -->
   <!-- File: moloch_get_pcap.html
-  Copyright (c) 2019-2025 Splunk Inc.
+  Copyright (c) 2019-2026 Splunk Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -87,7 +87,7 @@ and limitations under the License.
               <td>Source IP</td>
               <td>
                 <a href="javascript:;"
-                   onclick="context_menu(this, [{'contains': ['ip'], 'value': '{{ result.param.source_ip }}' }], 0, {{ container.id }}, null, false);">
+                   onclick="context_menu(this, [{'contains': ['ip'], 'value': '{{ result.param.source_ip|escapejs }}' }], 0, {{ container.id }}, null, false);">
                   {{ result.param.source_ip }}
                   &nbsp;
                   <span class="fa fa-caret-down" style="font-size: smaller;"></span>
@@ -100,7 +100,7 @@ and limitations under the License.
               <td>Destination IP</td>
               <td>
                 <a href="javascript:;"
-                   onclick="context_menu(this, [{'contains': ['ip'], 'value': '{{ result.param.destination_ip }}' }], 0, {{ container.id }}, null, false);">
+                   onclick="context_menu(this, [{'contains': ['ip'], 'value': '{{ result.param.destination_ip|escapejs }}' }], 0, {{ container.id }}, null, false);">
                   {{ result.param.destination_ip }}
                   &nbsp;
                   <span class="fa fa-caret-down" style="font-size: smaller;"></span>
@@ -113,7 +113,7 @@ and limitations under the License.
               <td>Hostname</td>
               <td>
                 <a href="javascript:;"
-                   onclick="context_menu(this, [{'contains': ['host name'], 'value': '{{ result.param.hostname }}' }], 0, {{ container.id }}, null, false);">
+                   onclick="context_menu(this, [{'contains': ['host name'], 'value': '{{ result.param.hostname|escapejs }}' }], 0, {{ container.id }}, null, false);">
                   {{ result.param.hostname }}
                   &nbsp;
                   <span class="fa fa-caret-down" style="font-size: smaller;"></span>
@@ -126,7 +126,7 @@ and limitations under the License.
               <td>Custom Query</td>
               <td>
                 <a href="javascript:;"
-                   onclick="context_menu(this, [{'contains': ['moloch field'], 'value': '{{ result.param.custom_query }}' }], 0, {{ container.id }}, null, false);">
+                   onclick="context_menu(this, [{'contains': ['moloch field'], 'value': '{{ result.param.custom_query|escapejs }}' }], 0, {{ container.id }}, null, false);">
                   {{ result.param.custom_query }}
                   &nbsp;
                   <span class="fa fa-caret-down" style="font-size: smaller;"></span>
@@ -154,7 +154,7 @@ and limitations under the License.
                 <tr>
                   <td class="widget-td">
                     <a href="javascript:;"
-                       onclick="context_menu(this, [{'contains': ['file name'], 'value': '{{ item.file_name }}' }], 0, {{ container.id }}, null, false);">
+                       onclick="context_menu(this, [{'contains': ['file name'], 'value': '{{ item.file_name|escapejs }}' }], 0, {{ container.id }}, null, false);">
                       {{ item.file_name }}
                       &nbsp;
                       <span class="fa fa-caret-down" style="font-size: smaller;"></span>
@@ -162,7 +162,7 @@ and limitations under the License.
                   </td>
                   <td class="widget-td">
                     <a href="javascript:;"
-                       onclick="context_menu(this, [{'contains': ['vault id'], 'value': '{{ item.vault_id }}' }], 0, {{ container.id }}, null, false);">
+                       onclick="context_menu(this, [{'contains': ['vault id'], 'value': '{{ item.vault_id|escapejs }}' }], 0, {{ container.id }}, null, false);">
                       {{ item.vault_id }}
                       &nbsp;
                       <span class="fa fa-caret-down" style="font-size: smaller;"></span>
@@ -170,7 +170,7 @@ and limitations under the License.
                   </td>
                   <td class="widget-td">
                     <a href="javascript:;"
-                       onclick="context_menu(this, [{'contains': ['file size'], 'value': '{{ item.size }}' }], 0, {{ container.id }}, null, false);">
+                       onclick="context_menu(this, [{'contains': ['file size'], 'value': '{{ item.size|escapejs }}' }], 0, {{ container.id }}, null, false);">
                       {{ item.size }}
                       &nbsp;
                       <span class="fa fa-caret-down" style="font-size: smaller;"></span>
