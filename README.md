@@ -1,9 +1,9 @@
 # Moloch
 
-Publisher: Splunk Community \
-Connector Version: 3.0.1 \
-Product Vendor: Moloch \
-Product Name: Moloch \
+Publisher: Splunk Community <br>
+Connector Version: 3.0.1 <br>
+Product Vendor: Moloch <br>
+Product Name: Moloch <br>
 Minimum Product Version: 5.1.0
 
 This app integrates with Moloch to support various investigative actions
@@ -18,20 +18,20 @@ VARIABLE | REQUIRED | TYPE | DESCRIPTION
 **port** | optional | numeric | Moloch port |
 **username** | required | string | Username |
 **password** | required | password | Password |
-**verify_server_cert** | optional | boolean | Verify Server Certificate |
+**verify_server_cert** | optional | boolean | Verify Server Certificate. Disable only in isolated lab environments because disabling verification exposes credentials to on-path attackers. |
 
 ### Supported Actions
 
-[test connectivity](#action-test-connectivity) - Validate the asset configuration for connectivity using supplied configuration \
-[get pcap](#action-get-pcap) - Download the pcap file from server and add it to the vault \
-[list fields](#action-list-fields) - List all fields on which user can query \
+[test connectivity](#action-test-connectivity) - Validate the asset configuration for connectivity using supplied configuration <br>
+[get pcap](#action-get-pcap) - Download the pcap file from server and add it to the vault <br>
+[list fields](#action-list-fields) - List all fields on which user can query <br>
 [list files](#action-list-files) - List all pcap files
 
 ## action: 'test connectivity'
 
 Validate the asset configuration for connectivity using supplied configuration
 
-Type: **test** \
+Type: **test** <br>
 Read only: **True**
 
 #### Action Parameters
@@ -46,7 +46,7 @@ No Output
 
 Download the pcap file from server and add it to the vault
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 Parameter <b>limit</b> has a range of 0 to 2000000.<br>Parameter <b>custom_query</b> is case sensitive. Example for custom query of get_pcap action<br>port.src == 80 || port.dst == 80 && country != USA.
@@ -87,7 +87,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 List all fields on which user can query
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 #### Action Parameters
@@ -128,7 +128,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 List all pcap files
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 #### Action Parameters
@@ -155,7 +155,7 @@ ______________________________________________________________________
 
 Auto-generated Splunk SOAR Connector documentation.
 
-Copyright 2025 Splunk Inc.
+Copyright 2026 Splunk Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

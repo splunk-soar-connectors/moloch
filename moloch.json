@@ -9,7 +9,7 @@
     "product_name": "Moloch",
     "product_version_regex": ".*",
     "publisher": "Splunk Community",
-    "license": "Copyright (c) 2019-2025 Splunk Inc.",
+    "license": "Copyright (c) 2019-2026 Splunk Inc.",
     "app_version": "3.0.1",
     "utctime_updated": "2025-04-28T20:52:14.468036Z",
     "package_name": "phantom_moloch",
@@ -47,9 +47,9 @@
             "order": 3
         },
         "verify_server_cert": {
-            "description": "Verify Server Certificate",
+            "description": "Verify Server Certificate. Disable only in isolated lab environments because disabling verification exposes credentials to on-path attackers.",
             "data_type": "boolean",
-            "default": false,
+            "default": true,
             "order": 4
         }
     },
@@ -560,6 +560,18 @@
         }
     ],
     "pip39_dependencies": {
+        "wheel": [
+            {
+                "module": "chardet",
+                "input_file": "wheels/shared/chardet-3.0.4-py2.py3-none-any.whl"
+            },
+            {
+                "module": "python_magic",
+                "input_file": "wheels/shared/python_magic-0.4.18-py2.py3-none-any.whl"
+            }
+        ]
+    },
+    "pip313_dependencies": {
         "wheel": [
             {
                 "module": "chardet",

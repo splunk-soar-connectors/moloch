@@ -1,6 +1,6 @@
 # File: moloch_connector.py
 #
-# Copyright (c) 2019-2025 Splunk Inc.
+# Copyright (c) 2019-2026 Splunk Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -45,7 +45,7 @@ class MolochConnector(BaseConnector):
         self._port = None
         self._username = None
         self._password = None
-        self._verify_server_cert = False
+        self._verify_server_cert = True
 
     def initialize(self):
         """This is an optional function that can be implemented by the AppConnector derived class. Since the
@@ -65,7 +65,7 @@ class MolochConnector(BaseConnector):
         self._port = config.get(MOLOCH_CONFIG_PORT, 8005)
         self._username = config[MOLOCH_CONFIG_USERNAME]
         self._password = config[MOLOCH_CONFIG_PASSWORD]
-        self._verify_server_cert = config.get(MOLOCH_VERIFY_SERVER_CERT, False)
+        self._verify_server_cert = config.get(MOLOCH_VERIFY_SERVER_CERT, True)
 
         # Custom validation for IP address
         self.set_validator(MOLOCH_PARAM_IP, self._is_ip)
@@ -300,7 +300,7 @@ class MolochConnector(BaseConnector):
         endpoint = f":{self._port}{MOLOCH_TEST_CONNECTIVITY_ENDPOINT}"
 
         # make REST call
-        ret_val, response = self._make_rest_call(
+        ret_val, _response = self._make_rest_call(
             endpoint=endpoint, params=params, action_result=action_result, timeout=MOLOCH_TEST_CONNECTIVITY_TIMEOUT
         )
 
@@ -403,7 +403,7 @@ class MolochConnector(BaseConnector):
         endpoint = f":{self._port}{MOLOCH_GET_PCAP_ENDPOINT}"
 
         # make REST call
-        ret_val, response = self._make_rest_call(endpoint=endpoint, action_result=action_result, params=params)
+        ret_val, _response = self._make_rest_call(endpoint=endpoint, action_result=action_result, params=params)
 
         if phantom.is_fail(ret_val):
             return action_result.get_status()
