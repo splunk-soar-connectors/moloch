@@ -1,7 +1,7 @@
 # Moloch
 
 Publisher: Splunk Community <br>
-Connector Version: 3.0.1 <br>
+Connector Version: 3.0.2 <br>
 Product Vendor: Moloch <br>
 Product Name: Moloch <br>
 Minimum Product Version: 5.1.0
